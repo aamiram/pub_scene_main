@@ -1,4 +1,4 @@
-// Nagpur Localities Database
+// Nagpur localities used by the city filter.
 const localities = [
   { id: 'all', name: 'All Areas' },
   { id: 'dharampeth', name: 'Dharampeth' },
@@ -7,7 +7,7 @@ const localities = [
   { id: 'sadar', name: 'Sadar' }
 ];
 
-// Events and Venues Database
+// Fallback catalog if the API is unreachable. The server seeds the same records.
 const eventsData = [
   {
     id: 'v-1',
@@ -67,7 +67,20 @@ const eventsData = [
   }
 ];
 
-// Organizers & Clubs Database
+const eventCatalog = eventsData.slice();
+
+function findEventById(id) {
+  return eventCatalog.find((event) => event.id === id);
+}
+
+function rememberEvents(list) {
+  list.forEach((event) => {
+    const index = eventCatalog.findIndex((item) => item.id === event.id);
+    if (index >= 0) eventCatalog[index] = event;
+    else eventCatalog.push(event);
+  });
+}
+
 const venuesDirectory = [
   {
     id: 'org-1',

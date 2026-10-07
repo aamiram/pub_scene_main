@@ -1,48 +1,132 @@
 const express = require('express');
 const cors = require('cors');
 const crypto = require('crypto');
+const path = require('path');
 const Razorpay = require('razorpay');
 require('dotenv').config();
 
-const { saveOrGetUser, createBooking, updateBookingPayment, db } = require('./database');
+const {
+  saveOrGetUser,
+  createBooking,
+  updateBookingPayment,
+  listEvents,
+  getEventById,
+  listOrganizers,
+  setFollow,
+  createCollabLead,
+  listAdminUsers
+} = require('./database');
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({
+  verify: (req, _res, buf) => {
+    if (req.originalUrl.startsWith('/api/razorpay-webhook')) {
+      req.rawBody = buf;
+    }
+  }
+}));
 
-// Initialize Razorpay Instance
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,         // Loaded from .env
-  key_secret: process.env.RAZORPAY_KEY_SECRET  // Loaded from .env
+let razorpay = null;
+if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+  razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET
+  });
+}
+
+app.get('/api/events', (req, res) => {
+  try {
+    const events = listEvents({
+      category: req.query.category,
+      area: req.query.area,
+      q: typeof req.query.q === 'string' ? req.query.q.trim() : ''
+    });
+    res.json({ total: events.length, events });
+  } catch (err) {
+    console.error('Error listing events:', err);
+    res.status(500).json({ error: 'Could not load events' });
+  }
 });
 
-// -------------------------------------------------------------
-// 1. CREATE BOOKING & RAZORPAY ORDER ENDPOINT
-// -------------------------------------------------------------
+app.get('/api/organizers', (req, res) => {
+  try {
+    const organizers = listOrganizers(req.query.clientId);
+    res.json({ organizers });
+  } catch (err) {
+    console.error('Error listing organizers:', err);
+    res.status(500).json({ error: 'Could not load organizers' });
+  }
+});
+
+app.post('/api/follows', (req, res) => {
+  try {
+    const { organizerId, clientId, following } = req.body || {};
+    if (!organizerId || !clientId) {
+      return res.status(400).json({ error: 'Organizer and client id are required' });
+    }
+    const result = setFollow(organizerId, String(clientId), !!following);
+    if (!result) return res.status(404).json({ error: 'Organizer not found' });
+    res.json(result);
+  } catch (err) {
+    console.error('Error updating follow:', err);
+    res.status(500).json({ error: 'Could not update follow' });
+  }
+});
+
+app.post('/api/collab', (req, res) => {
+  try {
+    const { fullName, phone, email, message } = req.body || {};
+    const cleanPhone = String(phone || '').replace(/\D/g, '');
+    if (!fullName || !String(fullName).trim() || cleanPhone.length < 10) {
+      return res.status(400).json({ error: 'Name and a valid phone number are required' });
+    }
+    const lead = createCollabLead({
+      fullName: String(fullName).trim(),
+      phone: cleanPhone,
+      email: email ? String(email).trim() : '',
+      message: message ? String(message).trim() : ''
+    });
+    res.status(201).json({ ...lead, message: 'Collaboration request received' });
+  } catch (err) {
+    console.error('Error saving collab lead:', err);
+    res.status(500).json({ error: 'Could not save collaboration request' });
+  }
+});
+
 app.post('/api/create-pass-order', async (req, res) => {
   try {
-    const { user, booking } = req.body;
+    const { user, booking } = req.body || {};
 
-    // Validate Input
     if (!user || !user.fullName || !user.phone) {
       return res.status(400).json({ error: 'User full name and mobile number are mandatory' });
     }
+    if (!booking || !booking.venueId) {
+      return res.status(400).json({ error: 'Choose an event before booking a pass' });
+    }
 
-    // A. Save or Update User Contact Info in SQLite DB
+    const event = getEventById(booking.venueId);
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    const couplePasses = Math.max(0, parseInt(booking.couplePasses, 10) || 0);
+    const stagPasses = Math.max(0, parseInt(booking.stagPasses, 10) || 0);
+    if (couplePasses + stagPasses < 1) {
+      return res.status(400).json({ error: 'Choose at least one pass' });
+    }
+
+    const amount = stagPasses * Number(event.coverPrice);
     const userId = await saveOrGetUser(user);
-
-    // Generate unique Pass ID
     const passCode = 'PUB-' + Math.floor(100000 + Math.random() * 900000);
-    const amount = Number(booking.totalAmount);
 
-    // B. Handle 100% Free Guestlist Entries (₹0)
     if (amount === 0) {
       const savedPass = await createBooking({
         userId,
-        venueId: booking.venueId,
-        venueName: booking.venueName,
-        couplePasses: booking.couplePasses || 0,
-        stagPasses: booking.stagPasses || 0,
+        venueId: event.id,
+        venueName: event.name,
+        couplePasses,
+        stagPasses,
         totalAmount: 0,
         razorpayOrderId: 'FREE_ENTRY_' + Date.now(),
         passCode,
@@ -52,32 +136,34 @@ app.post('/api/create-pass-order', async (req, res) => {
       return res.status(200).json({
         isFree: true,
         passCode: savedPass.passCode,
-        venueName: booking.venueName,
+        venueName: event.name,
         message: 'Free entry pass generated successfully'
       });
     }
 
-    // C. Create Paid Razorpay Order
+    if (!razorpay) {
+      return res.status(503).json({ error: 'Paid checkout is not configured' });
+    }
+
     const options = {
-      amount: Math.round(amount * 100), // Amount in paise
+      amount: Math.round(amount * 100),
       currency: 'INR',
       receipt: `rcpt_${passCode}`,
       notes: {
         userId: userId.toString(),
-        venue: booking.venueName,
+        venue: event.name,
         phone: user.phone
       }
     };
 
     const order = await razorpay.orders.create(options);
 
-    // Save initial pending booking record
     await createBooking({
       userId,
-      venueId: booking.venueId,
-      venueName: booking.venueName,
-      couplePasses: booking.couplePasses || 0,
-      stagPasses: booking.stagPasses || 0,
+      venueId: event.id,
+      venueName: event.name,
+      couplePasses,
+      stagPasses,
       totalAmount: amount,
       razorpayOrderId: order.id,
       passCode,
@@ -90,7 +176,7 @@ app.post('/api/create-pass-order', async (req, res) => {
       amount: order.amount,
       currency: order.currency,
       passCode,
-      keyId: process.env.RAZORPAY_KEY_ID // Send client public key
+      keyId: process.env.RAZORPAY_KEY_ID
     });
   } catch (err) {
     console.error('Error creating pass order:', err);
@@ -98,12 +184,15 @@ app.post('/api/create-pass-order', async (req, res) => {
   }
 });
 
-// -------------------------------------------------------------
-// 2. VERIFY PAYMENT SIGNATURE ENDPOINT
-// -------------------------------------------------------------
 app.post('/api/verify-payment', async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, passCode } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, passCode } = req.body || {};
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({ status: 'failure', message: 'Payment details are incomplete' });
+    }
+    if (!process.env.RAZORPAY_KEY_SECRET) {
+      return res.status(503).json({ status: 'failure', message: 'Payment verification is not configured' });
+    }
 
     const body = razorpay_order_id + '|' + razorpay_payment_id;
     const expectedSignature = crypto
@@ -112,73 +201,63 @@ app.post('/api/verify-payment', async (req, res) => {
       .digest('hex');
 
     if (expectedSignature === razorpay_signature) {
-      // Payment Authenticated -> Update booking status to SUCCESS
       await updateBookingPayment(razorpay_order_id, razorpay_payment_id, 'SUCCESS');
       return res.status(200).json({ status: 'success', message: 'Payment verified', passCode });
-    } else {
-      await updateBookingPayment(razorpay_order_id, razorpay_payment_id, 'FAILED_SIGNATURE');
-      return res.status(400).json({ status: 'failure', message: 'Signature verification failed' });
     }
+
+    await updateBookingPayment(razorpay_order_id, razorpay_payment_id, 'FAILED_SIGNATURE');
+    return res.status(400).json({ status: 'failure', message: 'Signature verification failed' });
   } catch (err) {
     console.error('Verification error:', err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// -------------------------------------------------------------
-// 3. RAZORPAY ASYNCHRONOUS WEBHOOK ENDPOINT
-// -------------------------------------------------------------
 app.post('/api/razorpay-webhook', async (req, res) => {
   try {
     const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
     const webhookSignature = req.headers['x-razorpay-signature'];
+    if (!webhookSecret || !webhookSignature || !req.rawBody) {
+      return res.status(400).json({ status: 'invalid_signature' });
+    }
 
     const expectedSignature = crypto
       .createHmac('sha256', webhookSecret)
-      .update(JSON.stringify(req.body))
+      .update(req.rawBody)
       .digest('hex');
 
-    if (expectedSignature === webhookSignature) {
-      const event = req.body.event;
-
-      if (event === 'payment.captured' || event === 'order.paid') {
-        const paymentEntity = req.body.payload.payment.entity;
-        const orderId = paymentEntity.order_id;
-        const paymentId = paymentEntity.id;
-
-        await updateBookingPayment(orderId, paymentId, 'SUCCESS_WEBHOOK');
-        console.log(`[Webhook Confirmed] Order ${orderId} marked as SUCCESS.`);
-      }
-
-      return res.status(200).json({ status: 'ok' });
-    } else {
+    if (expectedSignature !== webhookSignature) {
       console.warn('Webhook signature mismatch. Dropping request.');
       return res.status(400).json({ status: 'invalid_signature' });
     }
+
+    const event = req.body.event;
+    if (event === 'payment.captured' || event === 'order.paid') {
+      const paymentEntity = req.body.payload?.payment?.entity;
+      if (paymentEntity?.order_id && paymentEntity?.id) {
+        await updateBookingPayment(paymentEntity.order_id, paymentEntity.id, 'SUCCESS_WEBHOOK');
+        console.log(`[Webhook Confirmed] Order ${paymentEntity.order_id} marked as SUCCESS.`);
+      }
+    }
+
+    return res.status(200).json({ status: 'ok' });
   } catch (err) {
     console.error('Webhook error:', err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// -------------------------------------------------------------
-// 4. ADMIN CRM LEAD RETRIEVAL (GET ALL USERS & LEADS)
-// -------------------------------------------------------------
-app.get('/api/admin/users', (req, res) => {
-  const query = `
-    SELECT u.id, u.full_name, u.phone, u.email, u.city, u.created_at,
-           COUNT(b.id) as total_bookings,
-           COALESCE(SUM(b.total_amount), 0) as lifetime_spent
-    FROM users u
-    LEFT JOIN bookings b ON u.id = b.user_id AND b.payment_status IN ('SUCCESS', 'FREE_CONFIRMED', 'SUCCESS_WEBHOOK')
-    GROUP BY u.id
-    ORDER BY u.created_at DESC
-  `;
-  db.all(query, [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.status(200).json({ total: rows.length, users: rows });
-  });
+app.get('/api/admin/users', (_req, res) => {
+  try {
+    const users = listAdminUsers();
+    res.status(200).json({ total: users.length, users });
+  } catch (err) {
+    console.error('Admin users error:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
+
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
