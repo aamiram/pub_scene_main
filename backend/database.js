@@ -2,9 +2,18 @@ const Database = require('better-sqlite3');
 const path = require('path');
 
 const dbPath = path.resolve(__dirname, 'pubscene.db');
-const db = new Database(dbPath);
 
-console.log('Connected to SQLite database: pubscene.db');
+let db;
+try {
+  db = new Database(dbPath);
+  db.pragma('journal_mode = WAL');
+  db.pragma('busy_timeout = 5000');
+  db.pragma('foreign_keys = ON');
+  console.log('Connected to SQLite database: pubscene.db');
+} catch (err) {
+  console.error('SQLite failed to open. The API cannot start:', err.message);
+  throw err;
+}
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
@@ -45,7 +54,8 @@ db.exec(`
     cover_price REAL NOT NULL,
     offer_text TEXT,
     image TEXT,
-    badge TEXT
+    badge TEXT,
+    couple_price REAL DEFAULT 0
   );
 
   CREATE TABLE IF NOT EXISTS organizers (
@@ -75,11 +85,30 @@ db.exec(`
   );
 `);
 
+const userColumns = db.prepare('PRAGMA table_info(users)').all().map((column) => column.name);
+if (!userColumns.includes('instagram')) db.exec('ALTER TABLE users ADD COLUMN instagram TEXT');
+if (!userColumns.includes('age')) db.exec('ALTER TABLE users ADD COLUMN age INTEGER');
+
+const eventColumns = db.prepare('PRAGMA table_info(events)').all().map((column) => column.name);
+if (!eventColumns.includes('couple_price')) {
+  db.exec('ALTER TABLE events ADD COLUMN couple_price REAL DEFAULT 0');
+}
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS admin_sessions (
+    token TEXT PRIMARY KEY,
+    expires_at INTEGER NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS app_meta (
+    key TEXT PRIMARY KEY,
+    value TEXT
+  );
+`);
+
 const seedEvents = [
-  ['v-1', 'Bollywood Blast ft. DJ Tarab', 'Drinx Exchange Nagpur', 'dharampeth', 'Dharampeth', 'club_nights', 'Sat, 10 Oct • 7:00 PM', 99, 1000, 'Couple Entry Free before 9:30 PM', 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&auto=format&fit=crop&q=80', 'EXCLUSIVE PASS'],
-  ['v-2', 'Vortex Melodic Techno Night', 'Vortex Cyber Lounge', 'civil_lines', 'Civil Lines', 'concerts', 'Sun, 11 Oct • 8:00 PM', 499, 1500, 'First 50 Entries Get Free VIP Shots', 'https://images.unsplash.com/photo-1574391884720-bbc3740c59d1?w=600&auto=format&fit=crop&q=80', 'TECHNO SPECIAL'],
-  ['v-3', 'Sunday Sunset Acoustic Jamming', 'Sky Garden Terrace Lounge', 'sadar', 'Sadar', 'jamming', 'Sun, 11 Oct • 5:30 PM', 199, 500, 'Complimentary Mocktail with Pass', 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&auto=format&fit=crop&q=80', 'SUNDOWNER'],
-  ['v-4', 'Standup Comedy & Cocktails', 'The Illusion Club & Bar', 'wardha_rd', 'Wardha Road', 'comedy', 'Fri, 16 Oct • 8:30 PM', 299, 800, 'Free Entry for Couples with Pre-Booking', 'https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=600&auto=format&fit=crop&q=80', 'LIMITED SEATS']
+  ['city-showdown', 'City Showdown ft. Shubz', 'Raasta, Nagpur', 'raasta', 'Raasta', 'club_nights', 'Sat, 12 Sep • 8:00 PM', 499, 999, 'Bollywood, Bolly-tech and commercial. Also featuring Squadout and DJ Vicky.', '/assets/flyers/city-showdown.jpg', 'SHUBZ', 499],
+  ['night-to-remember', 'Night To Remember ft. Hamshyre', 'Raasta, Nagpur', 'raasta', 'Raasta', 'club_nights', 'Sun, 4 Oct • 8:00 PM', 499, 999, 'A night to remember at Raasta.', '/assets/flyers/night-to-remember.jpg', 'HAMSHYRE', 499],
+  ['shanivaar', 'Shanivaar ft. Neel Chhabra', 'Raasta, Nagpur', 'raasta', 'Raasta', 'club_nights', 'Sat, 26 Sep • 9:00 PM', 499, 999, 'Also featuring Squadout and Vicky.', '/assets/flyers/shanivaar.jpg', 'NEEL CHHABRA', 499]
 ];
 
 const seedOrganizers = [
@@ -91,18 +120,27 @@ const seedOrganizers = [
 const insertEvent = db.prepare(`
   INSERT OR IGNORE INTO events (
     id, name, venue_name, area_id, area_name, category, event_date,
-    price, cover_price, offer_text, image, badge
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    price, cover_price, offer_text, image, badge, couple_price
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `);
 const insertOrganizer = db.prepare(`
   INSERT OR IGNORE INTO organizers (id, name, location, rating, description, tag)
   VALUES (?, ?, ?, ?, ?, ?)
 `);
 
-db.transaction(() => {
-  seedEvents.forEach((row) => insertEvent.run(...row));
-  seedOrganizers.forEach((row) => insertOrganizer.run(...row));
-})();
+try {
+  db.transaction(() => {
+    const migrated = db.prepare('SELECT value FROM app_meta WHERE key = ?').get('original_flyers_v1');
+    if (!migrated) {
+      db.prepare('DELETE FROM events WHERE id IN (?, ?, ?, ?)').run('v-1', 'v-2', 'v-3', 'v-4');
+      seedEvents.forEach((row) => insertEvent.run(...row));
+      db.prepare('INSERT INTO app_meta (key, value) VALUES (?, ?)').run('original_flyers_v1', '1');
+    }
+    seedOrganizers.forEach((row) => insertOrganizer.run(...row));
+  })();
+} catch (err) {
+  console.error('Event seed skipped:', err.message);
+}
 
 function mapEvent(row) {
   return {
@@ -115,6 +153,7 @@ function mapEvent(row) {
     date: row.event_date,
     price: row.price,
     coverPrice: row.cover_price,
+    couplePrice: row.couple_price == null ? 0 : row.couple_price,
     offerText: row.offer_text,
     image: row.image,
     badge: row.badge
@@ -192,17 +231,18 @@ function listAdminUsers() {
 function saveOrGetUser(userData) {
   return new Promise((resolve, reject) => {
     try {
-      const { fullName, phone, email, whatsappConsent } = userData;
+      const { fullName, phone, instagram, age } = userData;
+      const phoneKey = phone || ('ig:' + String(instagram || '').toLowerCase());
       const upsert = db.prepare(`
-        INSERT INTO users (full_name, phone, email, whatsapp_consent)
+        INSERT INTO users (full_name, phone, instagram, age)
         VALUES (?, ?, ?, ?)
         ON CONFLICT(phone) DO UPDATE SET
           full_name = excluded.full_name,
-          email = COALESCE(excluded.email, users.email),
-          whatsapp_consent = excluded.whatsapp_consent
+          instagram = excluded.instagram,
+          age = excluded.age
       `);
-      upsert.run(fullName, phone, email || null, whatsappConsent ? 1 : 0);
-      const user = db.prepare('SELECT id FROM users WHERE phone = ?').get(phone);
+      upsert.run(fullName, phoneKey, instagram || null, age);
+      const user = db.prepare('SELECT id FROM users WHERE phone = ?').get(phoneKey);
       resolve(user.id);
     } catch (err) {
       reject(err);
@@ -250,8 +290,107 @@ function updateBookingPayment(orderId, paymentId, status) {
   });
 }
 
+function saveEvent(event) {
+  const couplePrice = Math.max(0, Number(event.couplePrice) || 0);
+  const coverPrice = Math.max(0, Number(event.coverPrice) || 0);
+  const paid = [couplePrice, coverPrice].filter((amount) => amount > 0);
+  const fromPrice = paid.length ? Math.min(...paid) : 0;
+  db.prepare(`
+    INSERT INTO events (
+      id, name, venue_name, area_id, area_name, category, event_date,
+      price, cover_price, couple_price, offer_text, image, badge
+    ) VALUES (
+      @id, @name, @venueName, @areaId, @areaName, @category, @date,
+      @price, @coverPrice, @couplePrice, @offerText, @image, @badge
+    )
+    ON CONFLICT(id) DO UPDATE SET
+      name = excluded.name,
+      venue_name = excluded.venue_name,
+      area_id = excluded.area_id,
+      area_name = excluded.area_name,
+      category = excluded.category,
+      event_date = excluded.event_date,
+      price = excluded.price,
+      cover_price = excluded.cover_price,
+      couple_price = excluded.couple_price,
+      offer_text = excluded.offer_text,
+      image = excluded.image,
+      badge = excluded.badge
+  `).run({
+    id: event.id,
+    name: event.name,
+    venueName: event.venueName,
+    areaId: event.areaId,
+    areaName: event.areaName,
+    category: event.category,
+    date: event.date,
+    price: fromPrice,
+    coverPrice,
+    couplePrice,
+    offerText: event.offerText || '',
+    image: event.image || '',
+    badge: event.badge || ''
+  });
+  return getEventById(event.id);
+}
+
+function deleteEvent(id) {
+  return db.prepare('DELETE FROM events WHERE id = ?').run(id).changes;
+}
+
+function listAdminBookings() {
+  return db.prepare(`
+    SELECT b.id, b.venue_name, b.couple_passes, b.stag_passes, b.total_amount,
+           b.payment_status, b.pass_code, b.booking_date,
+           u.full_name, u.phone, u.instagram, u.age
+    FROM bookings b
+    LEFT JOIN users u ON u.id = b.user_id
+    ORDER BY b.booking_date DESC
+    LIMIT 100
+  `).all();
+}
+
+function listCollabLeads() {
+  return db.prepare(`
+    SELECT id, full_name, phone, email, message, created_at
+    FROM collab_leads
+    ORDER BY created_at DESC
+    LIMIT 100
+  `).all();
+}
+
+function createAdminSession() {
+  const crypto = require('crypto');
+  const token = crypto.randomBytes(32).toString('hex');
+  const expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000;
+  db.prepare('DELETE FROM admin_sessions WHERE expires_at < ?').run(Date.now());
+  db.prepare('INSERT INTO admin_sessions (token, expires_at) VALUES (?, ?)').run(token, expiresAt);
+  return token;
+}
+
+function getAdminSession(token) {
+  if (!token) return null;
+  const row = db.prepare('SELECT token, expires_at FROM admin_sessions WHERE token = ?').get(token);
+  if (!row || row.expires_at < Date.now()) return null;
+  return row;
+}
+
+function deleteAdminSession(token) {
+  if (!token) return;
+  db.prepare('DELETE FROM admin_sessions WHERE token = ?').run(token);
+}
+
+function closeDatabase() {
+  try {
+    if (db && db.open) db.close();
+  } catch (err) {
+    console.error('SQLite close failed:', err.message);
+  }
+}
+
 module.exports = {
   db,
+  closeDatabase,
   listEvents,
   getEventById,
   listOrganizers,
@@ -260,5 +399,12 @@ module.exports = {
   listAdminUsers,
   saveOrGetUser,
   createBooking,
-  updateBookingPayment
+  updateBookingPayment,
+  saveEvent,
+  deleteEvent,
+  listAdminBookings,
+  listCollabLeads,
+  createAdminSession,
+  getAdminSession,
+  deleteAdminSession
 };

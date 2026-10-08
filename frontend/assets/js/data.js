@@ -4,66 +4,56 @@ const localities = [
   { id: 'dharampeth', name: 'Dharampeth' },
   { id: 'civil_lines', name: 'Civil Lines' },
   { id: 'wardha_rd', name: 'Wardha Road' },
-  { id: 'sadar', name: 'Sadar' }
+  { id: 'sadar', name: 'Sadar' },
+  { id: 'raasta', name: 'Raasta' }
 ];
 
 // Fallback catalog if the API is unreachable. The server seeds the same records.
 const eventsData = [
   {
-    id: 'v-1',
-    name: 'Bollywood Blast ft. DJ Tarab',
-    venueName: 'Drinx Exchange Nagpur',
-    areaId: 'dharampeth',
-    areaName: 'Dharampeth',
+    id: 'city-showdown',
+    name: 'City Showdown ft. Shubz',
+    venueName: 'Raasta, Nagpur',
+    areaId: 'raasta',
+    areaName: 'Raasta',
     category: 'club_nights',
-    date: 'Sat, 10 Oct • 7:00 PM',
-    price: 99,
-    coverPrice: 1000,
-    offerText: 'Couple Entry Free before 9:30 PM',
-    image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&auto=format&fit=crop&q=80',
-    badge: 'EXCLUSIVE PASS'
-  },
-  {
-    id: 'v-2',
-    name: 'Vortex Melodic Techno Night',
-    venueName: 'Vortex Cyber Lounge',
-    areaId: 'civil_lines',
-    areaName: 'Civil Lines',
-    category: 'concerts',
-    date: 'Sun, 11 Oct • 8:00 PM',
+    date: 'Sat, 12 Sep • 8:00 PM',
     price: 499,
-    coverPrice: 1500,
-    offerText: 'First 50 Entries Get Free VIP Shots',
-    image: 'https://images.unsplash.com/photo-1574391884720-bbc3740c59d1?w=600&auto=format&fit=crop&q=80',
-    badge: 'TECHNO SPECIAL'
+    couplePrice: 499,
+    coverPrice: 999,
+    offerText: 'Bollywood, Bolly-tech and commercial. Also featuring Squadout and DJ Vicky.',
+    image: 'assets/flyers/city-showdown.jpg',
+    badge: 'SHUBZ'
   },
   {
-    id: 'v-3',
-    name: 'Sunday Sunset Acoustic Jamming',
-    venueName: 'Sky Garden Terrace Lounge',
-    areaId: 'sadar',
-    areaName: 'Sadar',
-    category: 'jamming',
-    date: 'Sun, 11 Oct • 5:30 PM',
-    price: 199,
-    coverPrice: 500,
-    offerText: 'Complimentary Mocktail with Pass',
-    image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&auto=format&fit=crop&q=80',
-    badge: 'SUNDOWNER'
+    id: 'night-to-remember',
+    name: 'Night To Remember ft. Hamshyre',
+    venueName: 'Raasta, Nagpur',
+    areaId: 'raasta',
+    areaName: 'Raasta',
+    category: 'club_nights',
+    date: 'Sun, 4 Oct • 8:00 PM',
+    price: 499,
+    couplePrice: 499,
+    coverPrice: 999,
+    offerText: 'A night to remember at Raasta.',
+    image: 'assets/flyers/night-to-remember.jpg',
+    badge: 'HAMSHYRE'
   },
   {
-    id: 'v-4',
-    name: 'Standup Comedy & Cocktails',
-    venueName: 'The Illusion Club & Bar',
-    areaId: 'wardha_rd',
-    areaName: 'Wardha Road',
-    category: 'comedy',
-    date: 'Fri, 16 Oct • 8:30 PM',
-    price: 299,
-    coverPrice: 800,
-    offerText: 'Free Entry for Couples with Pre-Booking',
-    image: 'https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=600&auto=format&fit=crop&q=80',
-    badge: 'LIMITED SEATS'
+    id: 'shanivaar',
+    name: 'Shanivaar ft. Neel Chhabra',
+    venueName: 'Raasta, Nagpur',
+    areaId: 'raasta',
+    areaName: 'Raasta',
+    category: 'club_nights',
+    date: 'Sat, 26 Sep • 9:00 PM',
+    price: 499,
+    couplePrice: 499,
+    coverPrice: 999,
+    offerText: 'Also featuring Squadout and Vicky.',
+    image: 'assets/flyers/shanivaar.jpg',
+    badge: 'NEEL CHHABRA'
   }
 ];
 

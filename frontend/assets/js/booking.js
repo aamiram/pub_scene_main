@@ -17,7 +17,7 @@ function changeQty(type, delta) {
 
 function updateSubtotal() {
   if (!activeBookingVenue) return 0;
-  const coupleCost = quantities.couple * 0;
+  const coupleCost = quantities.couple * Number(activeBookingVenue.couplePrice || 0);
   const stagCost = quantities.stag * Number(activeBookingVenue.coverPrice || 0);
   const total = coupleCost + stagCost;
   const totalNode = document.getElementById('bookingTotalDisplay');
@@ -47,9 +47,17 @@ function openBookingModal(venueId) {
   setText('modalEventDate', venue.date || '');
   setText('qty-couple', '1');
   setText('qty-stag', '0');
-  setText('stagPriceLabel', `₹${venue.coverPrice} each`);
+  const couplePrice = Number(venue.couplePrice || 0);
+  setText('couplePriceLabel', couplePrice > 0 ? `₹${couplePrice} each` : 'Free entry');
+  setText('stagPriceLabel', `₹${Number(venue.coverPrice || 0)} each`);
 
   updateSubtotal();
+  ['custName', 'custAge', 'custInstagram', 'custPhone'].forEach((id) => {
+    const field = document.getElementById(id);
+    if (field) field.value = '';
+  });
+  document.getElementById('guestDetails')?.classList.add('hidden');
+  document.getElementById('continueToDetailsBtn')?.classList.remove('hidden');
 
   const submitBtn = document.getElementById('confirmPassBtn');
   if (submitBtn) {
@@ -84,6 +92,16 @@ function renderDigitalPass(passCode, venueName) {
   document.getElementById('modalPassSuccess')?.classList.remove('hidden');
 }
 
+document.getElementById('continueToDetailsBtn')?.addEventListener('click', () => {
+  if (quantities.couple === 0 && quantities.stag === 0) {
+    alert('Please choose at least 1 pass (couple or stag).');
+    return;
+  }
+  document.getElementById('guestDetails')?.classList.remove('hidden');
+  document.getElementById('continueToDetailsBtn')?.classList.add('hidden');
+  document.getElementById('custName')?.focus();
+});
+
 document.getElementById('confirmPassBtn')?.addEventListener('click', async () => {
   if (!activeBookingVenue) {
     alert('Choose an event before claiming a pass.');
@@ -91,17 +109,25 @@ document.getElementById('confirmPassBtn')?.addEventListener('click', async () =>
   }
 
   const fullName = document.getElementById('custName')?.value?.trim();
+  const age = parseInt(document.getElementById('custAge')?.value, 10);
+  const instagram = (document.getElementById('custInstagram')?.value || '').trim().replace(/^@+/, '');
   const phone = (document.getElementById('custPhone')?.value || '').replace(/\D/g, '');
-  const email = document.getElementById('custEmail')?.value?.trim();
-  const whatsappConsent = document.getElementById('custConsent')?.checked ?? true;
   const submitBtn = document.getElementById('confirmPassBtn');
 
-  if (!fullName || !phone) {
-    alert('Please enter your name and WhatsApp phone number.');
+  if (!fullName) {
+    alert('Enter your name.');
     return;
   }
-  if (phone.length < 10) {
-    alert('Please provide a valid 10-digit mobile number.');
+  if (!Number.isInteger(age) || age < 1 || age > 120) {
+    alert('Enter your age.');
+    return;
+  }
+  if (phone && phone.length < 10) {
+    alert('Enter a valid mobile number, or leave it blank and add Instagram.');
+    return;
+  }
+  if (!phone && !instagram) {
+    alert('Add a mobile number or your Instagram.');
     return;
   }
   if (quantities.couple === 0 && quantities.stag === 0) {
@@ -111,7 +137,7 @@ document.getElementById('confirmPassBtn')?.addEventListener('click', async () =>
 
   const totalAmount = updateSubtotal();
   const payload = {
-    user: { fullName, phone, email, whatsappConsent },
+    user: { fullName, phone, instagram, age },
     booking: {
       venueId: activeBookingVenue.id,
       venueName: activeBookingVenue.name,
@@ -153,8 +179,7 @@ document.getElementById('confirmPassBtn')?.addEventListener('click', async () =>
       order_id: data.orderId,
       prefill: {
         name: fullName,
-        contact: phone,
-        email: email || ''
+        contact: phone || ''
       },
       theme: { color: '#ff007f' },
       modal: {

@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PUB SCENE | Nagpur's #1 Nightlife Guide & Pass Booking</title>
+  <link rel="icon" href="assets/images/logo.png?v=2" />
   
   <!-- Tailwind CSS & Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -55,6 +56,12 @@
       transform: translateY(-1px);
     }
     .scrollbar-none::-webkit-scrollbar { display: none; }
+    img { max-width: 100%; }
+    input, select, textarea, button { font-size: 16px; }
+    .tap { min-height: 44px; }
+    @media (max-width: 640px) {
+      #bookingModal > div, #collabModal > div { max-width: 100%; border-radius: 16px; }
+    }
   </style>
 </head>
 <body class="selection:bg-[#ff007f] selection:text-white relative">
@@ -65,32 +72,24 @@
 
     <!-- 1. TOP NAVBAR -->
     <header class="sticky top-0 z-50 bg-[#08080f]/90 backdrop-blur-md border-b border-[#1c1a2e]">
-      <div class="max-w-7xl mx-auto px-4 lg:px-8 py-3.5 flex items-center justify-between gap-4">
+      <div class="max-w-7xl mx-auto px-4 lg:px-8 py-3 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         
         <!-- Logo -->
-        <a href="#" class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full border-2 border-[#ff007f] p-0.5 shadow-[0_0_12px_#ff007f] bg-black flex items-center justify-center">
-            <i class="fa-solid fa-headphones-simple text-xl text-[#00f0ff]"></i>
-          </div>
-          <div>
-            <span class="text-xl font-black tracking-wider text-white font-['Orbitron']">
-              PUB<span class="text-[#00f0ff]">SCENE</span>
-            </span>
-            <span class="text-[9px] block tracking-widest text-[#ff007f] font-bold uppercase">Nagpur</span>
-          </div>
+        <a href="#" class="flex items-center shrink-0" aria-label="PUB SCENE Nagpur">
+          <img src="assets/images/logo.png?v=2" alt="PUB SCENE" class="h-14 w-14 sm:h-16 sm:w-16 rounded-full object-cover" />
         </a>
 
         <!-- Search Bar with Live Filter -->
-        <div class="hidden md:flex flex-1 max-w-md mx-6 relative">
+        <div class="flex flex-1 md:max-w-md md:mx-6 relative">
           <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-500 text-xs"></i>
           <input type="text" id="mainSearchInput" placeholder="Search events, artists, venues..." 
-                 class="w-full bg-[#100f1c] text-xs text-gray-200 pl-9 pr-4 py-2.5 rounded-full border border-[#26243d] focus:outline-none focus:border-[#00f0ff] transition-all" />
+                 class="w-full bg-[#100f1c] text-base text-gray-200 pl-9 pr-4 py-3 rounded-full border border-[#26243d] focus:outline-none focus:border-[#00f0ff] transition-all" />
         </div>
 
         <!-- City Dropdown & Nav Links -->
-        <div class="flex items-center gap-4 text-xs font-semibold relative">
+        <div class="flex flex-wrap items-center gap-2 sm:gap-4 text-xs font-semibold relative">
           <div class="relative">
-            <button type="button" id="cityDropdownBtn" class="flex items-center gap-1.5 bg-[#121124] border border-[#2b274c] px-3 py-1.5 rounded-full hover:border-[#00f0ff]">
+            <button type="button" id="cityDropdownBtn" class="tap flex items-center gap-1.5 bg-[#121124] border border-[#2b274c] px-3 py-2 rounded-full hover:border-[#00f0ff]">
               <i class="fa-solid fa-location-dot text-[#ff007f]"></i>
               <span id="currentCityDisplay" class="text-gray-200">Nagpur (All)</span>
               <i class="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
@@ -103,6 +102,7 @@
               <button type="button" data-area="civil_lines" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">Civil Lines</button>
               <button type="button" data-area="wardha_rd" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">Wardha Road</button>
               <button type="button" data-area="sadar" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">Sadar</button>
+              <button type="button" data-area="raasta" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">Raasta</button>
             </div>
           </div>
           
@@ -110,7 +110,7 @@
           <a href="#venues" class="hidden sm:inline-block text-gray-400 hover:text-white">Venues</a>
           <a href="#collab" class="hidden sm:inline-block text-gray-400 hover:text-white">Join us</a>
 
-          <button type="button" id="loginBookBtn" class="btn-neon-primary px-4 py-2 rounded-full text-xs">
+          <button type="button" id="loginBookBtn" class="tap btn-neon-primary px-4 py-2 rounded-full text-xs">
             Book a pass
           </button>
         </div>
@@ -120,7 +120,8 @@
     <!-- 2. HERO CAROUSEL -->
     <section class="max-w-7xl mx-auto px-4 lg:px-8 pt-6 pb-4">
       <div class="relative bg-gradient-to-r from-[#120d2b] via-[#0d091e] to-[#0a1424] border border-cyan-500/20 rounded-2xl p-6 md:p-10 overflow-hidden shadow-[0_0_30px_rgba(0,240,255,0.08)]">
-        <div class="max-w-xl relative z-10">
+        <div class="grid md:grid-cols-[1.2fr_0.8fr] gap-6 items-center relative z-10">
+        <div>
           <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#00f0ff] bg-[#00f0ff]/10 border border-[#00f0ff]/30 px-3 py-1 rounded-full mb-4">
             <i class="fa-solid fa-user-group text-[10px]"></i> Who's going - Nagpur
           </span>
@@ -130,10 +131,12 @@
           <p class="text-xs md:text-sm text-gray-400 mt-2 mb-6">
             Follow your friends, discover crowd ratios, and spot the party scene at every club in Nagpur.
           </p>
-          <a href="#events" class="inline-flex items-center gap-2 btn-neon-primary px-5 py-2.5 rounded-lg text-xs">
+          <a href="#events" class="tap inline-flex items-center gap-2 btn-neon-primary px-5 py-2.5 rounded-lg text-sm">
             <span>Find your people</span>
             <i class="fa-solid fa-arrow-right text-[11px]"></i>
           </a>
+        </div>
+        <img id="heroFlyer" src="assets/flyers/city-showdown.jpg" alt="City Showdown flyer" class="w-full max-w-xs mx-auto rounded-xl border border-white/10 shadow-2xl" />
         </div>
       </div>
     </section>
@@ -141,7 +144,7 @@
     <!-- 3. CATEGORY PILL FILTER RIBBON -->
     <section class="max-w-7xl mx-auto px-4 lg:px-8 py-3">
       <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none text-xs">
-        <button type="button" data-category="all" class="cat-filter-btn bg-[#00f0ff] text-black font-bold px-4 py-2 rounded-full whitespace-nowrap shadow-[0_0_12px_rgba(0,240,255,0.4)]">All</button>
+        <button type="button" data-category="all" class="cat-filter-btn tap bg-[#00f0ff] text-black font-bold px-4 py-2 rounded-full whitespace-nowrap shadow-[0_0_12px_rgba(0,240,255,0.4)]">All</button>
         <button type="button" data-category="concerts" class="cat-filter-btn bg-[#121124] text-gray-300 hover:text-white border border-[#2b274c] px-4 py-2 rounded-full whitespace-nowrap"><i class="fa-solid fa-music mr-1.5 text-[#ff007f]"></i> Concerts</button>
         <button type="button" data-category="club_nights" class="cat-filter-btn bg-[#121124] text-gray-300 hover:text-white border border-[#2b274c] px-4 py-2 rounded-full whitespace-nowrap"><i class="fa-solid fa-champagne-glasses mr-1.5 text-[#00f0ff]"></i> Club Nights</button>
         <button type="button" data-category="comedy" class="cat-filter-btn bg-[#121124] text-gray-300 hover:text-white border border-[#2b274c] px-4 py-2 rounded-full whitespace-nowrap"><i class="fa-solid fa-microphone mr-1.5 text-purple-400"></i> Comedy</button>
@@ -158,7 +161,7 @@
         <a href="#events" id="seeAllEvents" class="text-xs text-[#00f0ff] font-semibold hover:underline">See all →</a>
       </div>
       <!-- Injected by app.js -->
-      <div id="eventsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"></div>
+      <div id="eventsGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5"></div>
     </section>
 
     <!-- 5. TOP ORGANIZERS & VENUES -->
@@ -271,7 +274,7 @@
             <i class="fa-solid fa-chevron-down faq-icon transition-transform text-[#00f0ff]"></i>
           </button>
           <div class="p-4 pt-0 text-[11px] text-gray-400 border-t border-[#1e1c33] hidden">
-            No account or password is required. Just enter your WhatsApp phone number and full name to confirm passes.
+            No account is required. Your name, age, and mobile number or Instagram are asked only when you book a pass.
           </div>
         </div>
       </div>
@@ -280,6 +283,7 @@
     <!-- 8. FOOTER -->
     <footer class="border-t border-[#1a182c] bg-[#050508] py-8 px-4 text-xs text-gray-400 text-center">
       <p>© 2026 PUB SCENE Nagpur. Powered by Razorpay & SQLite.</p>
+      <p class="mt-2"><a href="admin.html" class="text-[#00f0ff]">Owner login</a></p>
     </footer>
 
   </div>
@@ -301,7 +305,7 @@
           <div class="flex items-center justify-between bg-[#18152e] border border-purple-800/40 rounded px-3 py-2">
             <div>
               <p class="text-xs text-white font-semibold">Couple pass</p>
-              <p class="text-[10px] text-gray-400">Free with this offer</p>
+              <p id="couplePriceLabel" class="text-[10px] text-gray-400">₹0 each</p>
             </div>
             <div class="flex items-center gap-2">
               <button type="button" onclick="changeQty('couple', -1)" class="w-6 h-6 rounded-full bg-[#121124] border border-[#2b274c] text-white">−</button>
@@ -327,22 +331,24 @@
           <span id="bookingTotalDisplay" class="font-bold text-[#00f0ff]">₹0</span>
         </div>
 
-        <div class="space-y-2 mb-4">
-          <input type="text" id="custName" placeholder="Full Name (as per ID)" required
-                 class="w-full bg-[#18152e] border border-purple-800/40 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-[#00f0ff]" />
-          <input type="tel" id="custPhone" placeholder="WhatsApp Number" required
-                 class="w-full bg-[#18152e] border border-purple-800/40 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-[#00f0ff]" />
-          <input type="email" id="custEmail" placeholder="Email Address (Optional)"
-                 class="w-full bg-[#18152e] border border-purple-800/40 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-[#00f0ff]" />
-          <label class="flex items-center gap-2 text-[11px] text-gray-400">
-            <input type="checkbox" id="custConsent" checked class="accent-[#00f0ff]" />
-            Send this pass on WhatsApp
-          </label>
-        </div>
-
-        <button type="button" id="confirmPassBtn" class="w-full btn-neon-primary py-2.5 rounded-lg text-xs uppercase">
-          Claim Digital Entry Pass
+        <button type="button" id="continueToDetailsBtn" class="tap w-full btn-neon-primary py-3 rounded-lg text-sm uppercase">
+          Continue
         </button>
+
+        <div id="guestDetails" class="hidden space-y-2 mt-4">
+          <p class="text-xs text-gray-400">Name and age, plus a mobile number or Instagram.</p>
+          <input type="text" id="custName" placeholder="Full name" autocomplete="name"
+                 class="w-full bg-[#18152e] border border-purple-800/40 rounded px-3 py-3 text-base text-white focus:outline-none focus:border-[#00f0ff]" />
+          <input type="number" id="custAge" inputmode="numeric" min="1" max="120" placeholder="Age"
+                 class="w-full bg-[#18152e] border border-purple-800/40 rounded px-3 py-3 text-base text-white focus:outline-none focus:border-[#00f0ff]" />
+          <input type="text" id="custInstagram" placeholder="Instagram username" autocomplete="off"
+                 class="w-full bg-[#18152e] border border-purple-800/40 rounded px-3 py-3 text-base text-white focus:outline-none focus:border-[#00f0ff]" />
+          <input type="tel" id="custPhone" placeholder="Mobile number" autocomplete="tel"
+                 class="w-full bg-[#18152e] border border-purple-800/40 rounded px-3 py-3 text-base text-white focus:outline-none focus:border-[#00f0ff]" />
+          <button type="button" id="confirmPassBtn" class="tap w-full btn-neon-primary py-3 rounded-lg text-sm uppercase">
+            Claim Digital Entry Pass
+          </button>
+        </div>
       </div>
 
       <div id="modalPassSuccess" class="hidden text-center py-4">
@@ -386,8 +392,8 @@
     </div>
   </div>
 
-  <script src="assets/js/data.js"></script>
-  <script src="assets/js/booking.js"></script>
-  <script src="assets/js/app.js"></script>
+  <script src="assets/js/data.js?v=3"></script>
+  <script src="assets/js/booking.js?v=3"></script>
+  <script src="assets/js/app.js?v=3"></script>
 </body>
 </html>

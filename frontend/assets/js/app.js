@@ -42,27 +42,24 @@ function renderEvents(items) {
     return;
   }
 
+  const hero = document.getElementById('heroFlyer');
+  if (hero && items[0] && items[0].image) {
+    hero.src = items[0].image;
+    hero.alt = items[0].name || 'Event flyer';
+  }
+
   grid.innerHTML = items.map((event) => `
-    <article class="bg-[#100e21] border border-[#2b274c] rounded-2xl overflow-hidden flex flex-col hover:border-[#00f0ff]/60 transition-colors">
-      <div class="relative h-40 overflow-hidden">
-        <img src="${escapeHtml(event.image)}" alt="${escapeHtml(event.name)}" class="w-full h-full object-cover" />
-        <span class="absolute top-2 left-2 bg-black/70 text-[10px] font-bold text-[#00f0ff] px-2 py-0.5 rounded">${escapeHtml(event.badge || event.areaName)}</span>
-        <span class="absolute top-2 right-2 bg-[#ff007f] text-white text-[10px] font-bold px-2 py-0.5 rounded">${escapeHtml(event.areaName)}</span>
-      </div>
+    <article class="bg-[#100e21] border border-[#2b274c] rounded-2xl overflow-hidden flex flex-col">
+      <img src="${escapeHtml(event.image)}" alt="${escapeHtml(event.name)} flyer" class="w-full h-auto bg-black" />
       <div class="p-4 flex flex-col flex-1 gap-2">
-        <p class="text-[10px] uppercase tracking-wide text-[#00f0ff]">${escapeHtml(event.date)}</p>
-        <h3 class="text-sm font-bold text-white leading-snug">${escapeHtml(event.name)}</h3>
-        <p class="text-[11px] text-gray-400">${escapeHtml(event.venueName)}</p>
-        <p class="text-[11px] text-pink-400">${escapeHtml(event.offerText)}</p>
-        <div class="mt-auto pt-3 flex items-center justify-between border-t border-[#2b274c]">
-          <div>
-            <span class="text-[10px] text-gray-500 block uppercase">From</span>
-            <span class="text-xs font-bold text-[#00f0ff]">₹${Number(event.price)}</span>
-          </div>
-          <button type="button" class="book-event-btn btn-neon-primary px-3 py-1.5 rounded-full text-[11px]" data-event-id="${escapeHtml(event.id)}">
-            Book pass
-          </button>
-        </div>
+        <p class="text-xs uppercase tracking-wide text-[#00f0ff]">${escapeHtml(event.date)}</p>
+        <h3 class="text-base font-bold text-white leading-snug">${escapeHtml(event.name)}</h3>
+        <p class="text-sm text-gray-400">${escapeHtml(event.venueName)}</p>
+        <p class="text-sm text-pink-400">${escapeHtml(event.offerText)}</p>
+        <p class="text-sm text-gray-200">Couple ₹${Number(event.couplePrice || 0)} · Stag ₹${Number(event.coverPrice || 0)}</p>
+        <button type="button" class="book-event-btn btn-neon-primary mt-2 w-full min-h-11 py-3 rounded-full text-sm" data-event-id="${escapeHtml(event.id)}">
+          Book pass
+        </button>
       </div>
     </article>
   `).join('');
