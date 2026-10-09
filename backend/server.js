@@ -22,10 +22,10 @@ const {
   saveEvent,
   deleteEvent,
   listAdminBookings,
-  listCollabLeads,
   createAdminSession,
   getAdminSession,
-  deleteAdminSession
+  deleteAdminSession,
+  getBookingsByEvent
 } = require('./database');
 
 const app = express();
@@ -330,12 +330,12 @@ app.post('/api/razorpay-webhook', async (req, res) => {
   }
 });
 
-const AREAS = {
-  raasta: 'Raasta',
-  dharampeth: 'Dharampeth',
-  civil_lines: 'Civil Lines',
-  wardha_rd: 'Wardha Road',
-  sadar: 'Sadar'
+const CITIES = {
+  Nagpur: 'Nagpur',
+  Mumbai: 'Mumbai',
+  Pune: 'Pune',
+  Hyderabad: 'Hyderabad',
+  Goa: 'Goa'
 };
 
 const CATEGORIES = new Set(['concerts', 'club_nights', 'comedy', 'jamming']);
@@ -404,16 +404,88 @@ app.post('/api/admin/logout', requireAdmin, (req, res) => {
   }
 });
 
+app.post('/api/organizer/login', (req, res) => {
+  try {
+    const { eventName, pin } = req.body || {};
+    if (!eventName || !pin) return res.status(400).json({ error: 'Event name and PIN required' });
+
+    const allEvents = listEvents({});
+    const event = allEvents.find(e => e.name.toLowerCase() === eventName.toLowerCase());
+    
+    if (!event) return res.status(404).json({ error: 'Event not found' });
+    if (event.organizerPin !== pin) return res.status(401).json({ error: 'Incorrect PIN' });
+
+    const bookings = getBookingsByEvent(event.id) || [];
+    let totalCouple = 0;
+    let totalStag = 0;
+    let totalRevenue = 0;
+
+    const bookingList = bookings.map(b => {
+      totalCouple += (b.couple_passes || 0);
+      totalStag += (b.stag_passes || 0);
+      totalRevenue += (b.total_amount || 0);
+      return {
+        name: b.name,
+        couple: b.couple_passes,
+        stag: b.stag_passes,
+        amount: b.total_amount
+      };
+    });
+
+    res.json({
+      event: {
+        name: event.name,
+        venue: event.venueName,
+        date: event.date,
+        capacity: event.capacity || 100
+      },
+      stats: {
+        totalBookings: bookings.length,
+        totalRevenue: totalRevenue,
+        totalCouple: totalCouple,
+        totalStag: totalStag,
+        ticketsLeft: (event.capacity || 100) - (totalCouple + totalStag)
+      },
+      bookings: bookingList
+    });
+  } catch (err) {
+    console.error('Organizer login failed:', err);
+    res.status(500).json({ error: 'Could not log in' });
+  }
+});
+
 app.get('/api/admin/overview', requireAdmin, (_req, res) => {
   try {
     res.json({
-      events: listEvents(),
+      events: listEvents({}),
       bookings: listAdminBookings(),
       leads: listCollabLeads()
     });
   } catch (err) {
     console.error('Admin overview failed:', err);
     res.status(500).json({ error: 'Could not load the admin panel' });
+  }
+});
+
+app.post('/api/events', (req, res) => {
+  try {
+    const saved = upsertAdminEvent(req.body || {}, '');
+    res.status(201).json(saved);
+  } catch (err) {
+    console.error('Create public event failed:', err);
+    res.status(400).json({ error: err.message || 'Could not save the flyer' });
+  }
+});
+
+app.post('/api/collab', (req, res) => {
+  try {
+    const { fullName, phone, email, message } = req.body || {};
+    if (!fullName || !phone) return res.status(400).json({ error: 'Name and phone are required' });
+    const lead = createCollabLead({ fullName, phone, email, message });
+    res.status(201).json(lead);
+  } catch (err) {
+    console.error('Create collab failed:', err);
+    res.status(500).json({ error: 'Could not submit collaboration request' });
   }
 });
 
@@ -459,7 +531,7 @@ function upsertAdminEvent(body, forcedId, existing) {
   if (!name || !venueName || !date) {
     throw new Error('Name, venue, and date are required');
   }
-  if (!AREAS[areaId]) throw new Error('Choose an area');
+  if (!CITIES[areaId]) throw new Error('Choose a city');
   if (!CATEGORIES.has(category)) throw new Error('Choose a category');
 
   const id = forcedId || ('evt-' + Date.now().toString(36));
@@ -474,14 +546,16 @@ function upsertAdminEvent(body, forcedId, existing) {
     name,
     venueName,
     areaId,
-    areaName: AREAS[areaId],
+    areaName: CITIES[areaId],
     category,
     date,
     couplePrice: body.couplePrice,
     coverPrice: body.stagPrice,
     offerText: String(body.offerText || '').trim(),
     image,
-    badge: String(body.badge || '').trim()
+    badge: String(body.badge || '').trim(),
+    organizerPin: String(body.organizerPin || '').trim(),
+    capacity: parseInt(body.capacity, 10) || 100
   });
 }
 
