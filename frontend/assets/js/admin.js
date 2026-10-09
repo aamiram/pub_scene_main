@@ -75,16 +75,27 @@ function renderBookings() {
     host.innerHTML = '<div class="card"><p>No pass bookings yet. New bookings from the website show up here.</p></div>';
     return;
   }
-  host.innerHTML = '<div class="card table-wrap"><table><thead><tr><th>Guest</th><th>Event</th><th>Passes</th><th>Total</th><th>Status</th></tr></thead><tbody>' +
+  host.innerHTML = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">' +
     overview.bookings.map((row) => `
-      <tr>
-        <td>${escapeHtml(row.full_name || '')}${row.age ? ', ' + escapeHtml(row.age) : ''}<br><span class="muted">${escapeHtml(guestContact(row))}</span></td>
-        <td>${escapeHtml(row.venue_name || '')}</td>
-        <td>Couple ${Number(row.couple_passes || 0)}<br>Stag ${Number(row.stag_passes || 0)}</td>
-        <td>${money(row.total_amount)}</td>
-        <td>${escapeHtml(row.payment_status || '')}</td>
-      </tr>
-    `).join('') + '</tbody></table></div>';
+      <div class="bg-[#100e21] border border-[#2b274c] rounded-xl p-4 flex flex-col gap-2">
+        <div class="flex justify-between items-start">
+          <strong class="text-white text-base">${escapeHtml(row.full_name || '')}${row.age ? ', ' + escapeHtml(row.age) : ''}</strong>
+          <span class="text-[10px] font-bold px-2 py-1 rounded bg-[#17152b] ${row.payment_status === 'Paid' ? 'text-green-400' : 'text-[#ff007f]'} uppercase tracking-wide">${escapeHtml(row.payment_status || 'Pending')}</span>
+        </div>
+        <p class="text-xs text-gray-400"><i class="fa-solid fa-address-book mr-1.5 w-3"></i> ${escapeHtml(guestContact(row))}</p>
+        <p class="text-sm font-medium mt-1"><i class="fa-solid fa-location-dot text-[#ff007f] mr-1.5 w-3"></i> ${escapeHtml(row.venue_name || '')}</p>
+        <div class="bg-[#17152b] rounded-lg p-3 mt-2 flex justify-between items-center text-sm border border-[#2b274c]">
+          <div class="text-gray-300">
+            <span class="text-gray-500">Couple:</span> ${Number(row.couple_passes || 0)} <br>
+            <span class="text-gray-500">Stag:</span> ${Number(row.stag_passes || 0)}
+          </div>
+          <div class="text-right">
+            <div class="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Total</div>
+            <strong class="text-[#00f0ff] text-lg leading-none">${money(row.total_amount)}</strong>
+          </div>
+        </div>
+      </div>
+    `).join('') + '</div>';
 }
 
 function renderMessages() {
@@ -93,13 +104,16 @@ function renderMessages() {
     host.innerHTML = '<div class="card"><p>No collaboration messages yet.</p></div>';
     return;
   }
-  host.innerHTML = overview.leads.map((lead) => `
-    <article class="card">
-      <strong>${escapeHtml(lead.full_name)}</strong>
-      <p class="muted">${escapeHtml(lead.phone || '')} ${escapeHtml(lead.email || '')}</p>
-      <p>${escapeHtml(lead.message || '')}</p>
+  host.innerHTML = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">' + overview.leads.map((lead) => `
+    <article class="bg-[#100e21] border border-[#2b274c] rounded-xl p-4 flex flex-col gap-2 relative overflow-hidden">
+      <div class="absolute top-0 left-0 w-1 h-full bg-[#bd00ff]"></div>
+      <strong class="text-white text-base pl-2">${escapeHtml(lead.full_name)}</strong>
+      <p class="text-xs text-gray-400 pl-2"><i class="fa-solid fa-phone mr-1"></i> ${escapeHtml(lead.phone || '')} &nbsp; <i class="fa-regular fa-envelope ml-2 mr-1"></i> ${escapeHtml(lead.email || '')}</p>
+      <div class="bg-[#17152b] text-gray-300 text-sm p-3 rounded-lg border border-[#2b274c] mt-2 ml-2">
+        <i class="fa-solid fa-quote-left text-gray-600 mr-2"></i> ${escapeHtml(lead.message || '')}
+      </div>
     </article>
-  `).join('');
+  `).join('') + '</div>';
 }
 
 function escapeHtml(value) {
@@ -117,20 +131,54 @@ function clearForm() {
   flyerData = '';
   flyerPreview.hidden = true;
   flyerPreview.removeAttribute('src');
+  document.getElementById('organizerPin').value = '';
+  document.getElementById('eventCapacity').value = '100';
+  document.getElementById('ticketsContainer').innerHTML = '';
   formError.textContent = '';
+}
+
+function addTicketRow(name = '', price = '') {
+  const div = document.createElement('div');
+  div.className = 'flex gap-2 items-center bg-[#1a1736] p-2 rounded';
+  div.innerHTML = `
+    <input type="text" placeholder="e.g. VIP Couple" value="${name}" class="ticket-name w-1/2 bg-[#18152e] text-white border border-[#3a3560] rounded px-2 py-1 text-xs focus:outline-none focus:border-[#00f0ff]" />
+    <input type="number" placeholder="Price (₹)" value="${price}" class="ticket-price w-1/3 bg-[#18152e] text-white border border-[#3a3560] rounded px-2 py-1 text-xs focus:outline-none focus:border-[#00f0ff]" />
+    <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-400 p-1"><i class="fa-solid fa-trash"></i></button>
+  `;
+  document.getElementById('ticketsContainer').appendChild(div);
+}
+
+function getCustomTickets() {
+  const rows = document.querySelectorAll('#ticketsContainer > div');
+  const tickets = [];
+  rows.forEach(row => {
+    const name = row.querySelector('.ticket-name').value.trim();
+    const price = parseInt(row.querySelector('.ticket-price').value.trim(), 10) || 0;
+    if (name) tickets.push({ name, price });
+  });
+  return tickets.length > 0 ? tickets : null;
 }
 
 function fillForm(event) {
   document.getElementById('eventId').value = event.id;
   document.getElementById('eventName').value = event.name || '';
-  document.getElementById('eventDate').value = event.date || '';
+  document.getElementById('eventStart').value = '';
+  document.getElementById('eventEnd').value = '';
   document.getElementById('eventVenue').value = event.venueName || '';
-  document.getElementById('eventArea').value = event.areaId || 'raasta';
+  document.getElementById('eventCity').value = event.areaId || 'Nagpur';
   document.getElementById('eventCategory').value = event.category || 'club_nights';
   document.getElementById('couplePrice').value = Number(event.couplePrice || 0);
   document.getElementById('stagPrice').value = Number(event.coverPrice || 0);
   document.getElementById('offerText').value = event.offerText || '';
   document.getElementById('badge').value = event.badge || '';
+  document.getElementById('organizerPin').value = event.organizerPin || '';
+  document.getElementById('eventCapacity').value = event.capacity || 100;
+  
+  const container = document.getElementById('ticketsContainer');
+  container.innerHTML = '';
+  if (event.tickets && event.tickets.length > 0) {
+    event.tickets.forEach(t => addTicketRow(t.name, t.price));
+  }
   document.getElementById('formTitle').textContent = 'Edit flyer';
   flyerData = '';
   flyerPreview.src = event.image;
@@ -203,16 +251,30 @@ document.getElementById('eventForm').addEventListener('submit', async (event) =>
   event.preventDefault();
   formError.textContent = '';
   const id = document.getElementById('eventId').value;
+    const startVal = document.getElementById('eventStart').value;
+    const endVal = document.getElementById('eventEnd').value;
+    let formattedDate = '';
+    if (startVal) {
+      const opts = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' };
+      formattedDate = new Date(startVal).toLocaleString('en-US', opts).replace(/,/g, '');
+      if (endVal) {
+        formattedDate += ' to ' + new Date(endVal).toLocaleString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(/,/g, '');
+      }
+    }
+
   const payload = {
     name: document.getElementById('eventName').value.trim(),
-    date: document.getElementById('eventDate').value.trim(),
+    date: formattedDate,
     venueName: document.getElementById('eventVenue').value.trim(),
-    areaId: document.getElementById('eventArea').value,
+    areaId: document.getElementById('eventCity').value,
     category: document.getElementById('eventCategory').value,
     couplePrice: document.getElementById('couplePrice').value,
     stagPrice: document.getElementById('stagPrice').value,
     offerText: document.getElementById('offerText').value.trim(),
-    badge: document.getElementById('badge').value.trim()
+    badge: document.getElementById('badge').value.trim(),
+    organizerPin: document.getElementById('organizerPin').value.trim(),
+    capacity: document.getElementById('eventCapacity').value,
+    tickets: getCustomTickets()
   };
   if (flyerData) payload.imageData = flyerData;
   try {

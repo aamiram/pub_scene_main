@@ -1,3 +1,4 @@
+const API_BASE = '';
 let activeCategory = 'all';
 let activeArea = 'all';
 let searchQuery = '';
@@ -33,6 +34,25 @@ function filterEventsLocally() {
   });
 }
 
+function isEventExpired(dateStr) {
+  try {
+    let clean = String(dateStr || '').replace(/^[A-Za-z]+,\s*/, '').replace(' •', '');
+    clean = clean.split(' to ')[0].trim();
+    if (!/\d{4}/.test(clean)) {
+       let parts = clean.split(' ');
+       if (parts.length >= 2) {
+          parts.splice(2, 0, new Date().getFullYear());
+          clean = parts.join(' ');
+       }
+    }
+    const eventTime = new Date(clean).getTime();
+    if (eventTime && eventTime < Date.now()) {
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
 function renderEvents(items) {
   const grid = document.getElementById('eventsGrid');
   if (!grid) return;
@@ -48,21 +68,29 @@ function renderEvents(items) {
     hero.alt = items[0].name || 'Event flyer';
   }
 
-  grid.innerHTML = items.map((event) => `
-    <article class="bg-[#100e21] border border-[#2b274c] rounded-2xl overflow-hidden flex flex-col">
+  grid.innerHTML = items.map((event) => {
+    const expired = isEventExpired(event.date);
+    const btnClass = expired 
+      ? 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700' 
+      : 'btn-neon-primary book-event-btn';
+    const btnText = expired ? 'Closed' : 'Book pass';
+    const btnDisabled = expired ? 'disabled' : '';
+
+    return `
+    <article class="bg-[#100e21] border border-[#2b274c] rounded-2xl overflow-hidden flex flex-col ${expired ? 'opacity-80 grayscale-[20%]' : ''}">
       <img src="${escapeHtml(event.image)}" alt="${escapeHtml(event.name)} flyer" class="w-full h-auto bg-black" />
       <div class="p-4 flex flex-col flex-1 gap-2">
-        <p class="text-xs uppercase tracking-wide text-[#00f0ff]">${escapeHtml(event.date)}</p>
+        <p class="text-xs uppercase tracking-wide ${expired ? 'text-gray-500' : 'text-[#00f0ff]'}">${escapeHtml(event.date)}</p>
         <h3 class="text-base font-bold text-white leading-snug">${escapeHtml(event.name)}</h3>
         <p class="text-sm text-gray-400">${escapeHtml(event.venueName)}</p>
         <p class="text-sm text-pink-400">${escapeHtml(event.offerText)}</p>
         <p class="text-sm text-gray-200">Couple ₹${Number(event.couplePrice || 0)} · Stag ₹${Number(event.coverPrice || 0)}</p>
-        <button type="button" class="book-event-btn btn-neon-primary mt-2 w-full min-h-11 py-3 rounded-full text-sm" data-event-id="${escapeHtml(event.id)}">
-          Book pass
+        <button type="button" class="mt-2 w-full min-h-11 py-3 rounded-full text-sm font-bold transition-all ${btnClass}" data-event-id="${escapeHtml(event.id)}" ${btnDisabled}>
+          ${btnText}
         </button>
       </div>
     </article>
-  `).join('');
+  `}).join('');
 }
 
 async function loadEvents() {
@@ -158,12 +186,33 @@ function bindInterface() {
   });
 
   document.addEventListener('click', (event) => {
+    // Close legacy city dropdown
     const menu = document.getElementById('cityDropdownMenu');
     const button = document.getElementById('cityDropdownBtn');
-    if (!menu || !button) return;
-    if (!menu.contains(event.target) && !button.contains(event.target)) {
+    if (menu && button && !menu.contains(event.target) && !button.contains(event.target)) {
       menu.classList.add('hidden');
     }
+
+    // Close all new header dropdowns
+    const dropdowns = [
+      { menuId: 'mobileGridMenu' },
+      { menuId: 'mobileCityMenu' },
+      { menuId: 'mobileUserMenu' },
+      { menuId: 'desktopGridMenu' },
+      { menuId: 'desktopCityMenu' },
+      { menuId: 'desktopUserMenu' }
+    ];
+
+    dropdowns.forEach(d => {
+      const el = document.getElementById(d.menuId);
+      if (el && !el.contains(event.target)) {
+        // Find the button that toggles this menu by looking for onclick containing the menuId
+        const toggleBtn = event.target.closest(`[onclick*="${d.menuId}"]`);
+        if (!toggleBtn) {
+          el.classList.add('hidden');
+        }
+      }
+    });
   });
 
   document.querySelectorAll('.cat-filter-btn').forEach((button) => {

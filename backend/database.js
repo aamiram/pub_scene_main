@@ -55,7 +55,9 @@ db.exec(`
     offer_text TEXT,
     image TEXT,
     badge TEXT,
-    couple_price REAL DEFAULT 0
+    couple_price REAL DEFAULT 0,
+    organizer_pin TEXT,
+    capacity INTEGER DEFAULT 100
   );
 
   CREATE TABLE IF NOT EXISTS organizers (
@@ -92,6 +94,12 @@ if (!userColumns.includes('age')) db.exec('ALTER TABLE users ADD COLUMN age INTE
 const eventColumns = db.prepare('PRAGMA table_info(events)').all().map((column) => column.name);
 if (!eventColumns.includes('couple_price')) {
   db.exec('ALTER TABLE events ADD COLUMN couple_price REAL DEFAULT 0');
+}
+if (!eventColumns.includes('organizer_pin')) {
+  db.exec('ALTER TABLE events ADD COLUMN organizer_pin TEXT');
+}
+if (!eventColumns.includes('capacity')) {
+  db.exec('ALTER TABLE events ADD COLUMN capacity INTEGER DEFAULT 100');
 }
 
 db.exec(`
@@ -156,7 +164,9 @@ function mapEvent(row) {
     couplePrice: row.couple_price == null ? 0 : row.couple_price,
     offerText: row.offer_text,
     image: row.image,
-    badge: row.badge
+    badge: row.badge,
+    organizerPin: row.organizer_pin,
+    capacity: row.capacity
   };
 }
 
@@ -176,7 +186,7 @@ function listEvents({ category, area, q } = {}) {
     const like = `%${q}%`;
     params.push(like, like, like, like);
   }
-  sql += ' ORDER BY price ASC';
+  sql += ' ORDER BY id DESC';
   return db.prepare(sql).all(...params).map(mapEvent);
 }
 
@@ -298,10 +308,10 @@ function saveEvent(event) {
   db.prepare(`
     INSERT INTO events (
       id, name, venue_name, area_id, area_name, category, event_date,
-      price, cover_price, couple_price, offer_text, image, badge
+      price, cover_price, couple_price, offer_text, image, badge, organizer_pin, capacity
     ) VALUES (
       @id, @name, @venueName, @areaId, @areaName, @category, @date,
-      @price, @coverPrice, @couplePrice, @offerText, @image, @badge
+      @price, @coverPrice, @couplePrice, @offerText, @image, @badge, @organizerPin, @capacity
     )
     ON CONFLICT(id) DO UPDATE SET
       name = excluded.name,
@@ -315,7 +325,9 @@ function saveEvent(event) {
       couple_price = excluded.couple_price,
       offer_text = excluded.offer_text,
       image = excluded.image,
-      badge = excluded.badge
+      badge = excluded.badge,
+      organizer_pin = excluded.organizer_pin,
+      capacity = excluded.capacity
   `).run({
     id: event.id,
     name: event.name,
@@ -329,7 +341,9 @@ function saveEvent(event) {
     couplePrice,
     offerText: event.offerText || '',
     image: event.image || '',
-    badge: event.badge || ''
+    badge: event.badge || '',
+    organizerPin: event.organizerPin || '',
+    capacity: event.capacity || 100
   });
   return getEventById(event.id);
 }
@@ -380,6 +394,18 @@ function deleteAdminSession(token) {
   db.prepare('DELETE FROM admin_sessions WHERE token = ?').run(token);
 }
 
+function getBookingsByEvent(eventId) {
+  return db.prepare(`
+    SELECT b.id, b.venue_name, b.couple_passes, b.stag_passes, b.total_amount,
+           b.payment_status, b.pass_code, b.booking_date,
+           u.full_name as name, u.phone, u.instagram, u.age
+    FROM bookings b
+    LEFT JOIN users u ON u.id = b.user_id
+    WHERE b.venue_id = ? AND b.payment_status IN ('SUCCESS', 'FREE_CONFIRMED', 'SUCCESS_WEBHOOK')
+    ORDER BY b.booking_date DESC
+  `).all(eventId);
+}
+
 function closeDatabase() {
   try {
     if (db && db.open) db.close();
@@ -403,6 +429,7 @@ module.exports = {
   saveEvent,
   deleteEvent,
   listAdminBookings,
+  getBookingsByEvent,
   listCollabLeads,
   createAdminSession,
   getAdminSession,

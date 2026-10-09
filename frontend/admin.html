@@ -5,138 +5,151 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PUB SCENE | Owner</title>
   <link rel="icon" href="assets/images/logo.png?v=2" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    :root { color-scheme: dark; }
-    * { box-sizing: border-box; }
     body {
-      margin: 0;
       font-family: 'Plus Jakarta Sans', sans-serif;
       background: #07070b;
       color: #e8e8f0;
     }
-    header, main { width: min(980px, calc(100% - 24px)); margin: 0 auto; }
-    header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 0; }
-    a { color: #00f0ff; }
-    h1, h2 { margin: 0; }
-    h1 { font-size: 1.35rem; }
-    button, input, select, textarea { font: inherit; font-size: 16px; }
-    button { min-height: 44px; border: 0; border-radius: 999px; padding: 10px 16px; cursor: pointer; }
-    .primary { background: linear-gradient(135deg, #00f0ff, #0099ff); color: #041018; font-weight: 800; }
-    .ghost { background: #17152b; color: white; border: 1px solid #2b274c; }
-    .danger { background: #3a1024; color: #ffb4d2; }
-    .tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; }
-    .tabs button[aria-selected="true"] { background: #00f0ff; color: #041018; }
     .panel { display: none; }
     .panel.active { display: block; }
-    .card, form.card {
-      background: #100e21;
-      border: 1px solid #2b274c;
-      border-radius: 18px;
-      padding: 16px;
-      margin: 12px 0;
-    }
-    label { display: block; font-size: 0.85rem; margin: 12px 0 6px; color: #c9c9da; }
-    input, select, textarea {
-      width: 100%;
-      background: #18152e;
-      color: white;
-      border: 1px solid #3a3560;
-      border-radius: 12px;
-      padding: 12px;
-    }
-    .row { display: grid; grid-template-columns: 1fr; gap: 12px; }
-    @media (min-width: 720px) {
-      .row.two { grid-template-columns: 1fr 1fr; }
-    }
-    .flyer-list { display: grid; grid-template-columns: 1fr; gap: 12px; }
-    @media (min-width: 800px) {
-      .flyer-list { grid-template-columns: 1fr 1fr; }
-    }
-    .flyer {
-      display: grid;
-      grid-template-columns: 92px 1fr;
-      gap: 12px;
-      align-items: start;
-    }
-    .flyer img { width: 92px; height: auto; border-radius: 8px; background: black; }
-    .muted { color: #a3a3b8; font-size: 0.9rem; }
-    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-    .preview { width: min(220px, 100%); border-radius: 12px; margin-top: 8px; }
-    .login-wrap { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
-    .login-wrap form { width: min(420px, 100%); }
-    .error { color: #ff8ab5; min-height: 1.2em; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
-    th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid #2b274c; vertical-align: top; }
-    .table-wrap { overflow-x: auto; }
     [hidden] { display: none !important; }
+    
+    /* Dynamic classes injected by admin.js */
+    .card { background: #100e21; border: 1px solid #2b274c; border-radius: 18px; padding: 1.25rem; margin-bottom: 1rem; }
+    
+    .flyer-list { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+    @media (min-width: 768px) { .flyer-list { grid-template-columns: 1fr 1fr; } }
+    
+    .flyer { display: flex; flex-direction: column; gap: 1rem; }
+    @media (min-width: 480px) { .flyer { flex-direction: row; align-items: start; } }
+    
+    .flyer img { width: 100%; max-width: 120px; height: auto; border-radius: 12px; background: black; flex-shrink: 0; }
+    .muted { color: #a3a3b8; font-size: 0.85rem; margin-top: 0.25rem; }
+    
+    .actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+    .actions button { padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s; flex: 1; }
+    @media (min-width: 480px) { .actions button { flex: none; } }
+    .actions button:hover { opacity: 0.8; }
+    
+    button.primary { background: linear-gradient(135deg, #00f0ff, #0099ff); color: #041018; border: none; }
+    button.danger { background: #3a1024; color: #ffb4d2; border: 1px solid #ffb4d2; }
+    button.ghost { background: #17152b; color: white; border: 1px solid #2b274c; }
+    
+    .table-wrap { overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch; }
+    table { width: 100%; min-width: 600px; border-collapse: collapse; font-size: 0.92rem; }
+    th, td { text-align: left; padding: 12px 10px; border-bottom: 1px solid #2b274c; vertical-align: top; }
+    th { font-weight: 600; color: #c9c9da; }
+    
+    .tabs button[aria-selected="true"] { background: #00f0ff; color: #041018; border-color: #00f0ff; }
   </style>
 </head>
-<body>
-  <div id="loginView" class="login-wrap">
-    <form id="loginForm" class="card">
-      <h1>Owner login</h1>
-      <p class="muted">Add flyers and set couple and stag ticket prices.</p>
-      <label for="username">Username</label>
-      <input id="username" name="username" autocomplete="username" required />
-      <label for="password">Password</label>
-      <input id="password" name="password" type="password" autocomplete="current-password" required />
-      <p id="loginError" class="error"></p>
-      <button class="primary" type="submit">Log in</button>
+<body class="bg-[#07070b] text-gray-200 min-h-screen">
+  <div id="loginView" class="min-h-screen flex items-center justify-center p-4">
+    <form id="loginForm" class="bg-[#100e21] border border-[#2b274c] rounded-2xl p-6 md:p-8 w-full max-w-md shadow-2xl">
+      <div class="flex items-center justify-center mb-6">
+        <img src="assets/images/logo.png?v=2" class="h-16 w-16 rounded-full border border-[#ff007f]" />
+      </div>
+      <h1 class="text-2xl font-bold text-center text-white mb-2">Owner Login</h1>
+      <p class="text-sm text-gray-400 text-center mb-6">Add flyers and set couple and stag ticket prices.</p>
+      
+      <div class="mb-4">
+        <label for="username" class="block text-sm font-semibold text-gray-300 mb-2">Username</label>
+        <input id="username" name="username" autocomplete="username" required class="w-full bg-[#18152e] text-white border border-[#3a3560] rounded-xl px-4 py-3 focus:outline-none focus:border-[#00f0ff]" />
+      </div>
+      
+      <div class="mb-6">
+        <label for="password" class="block text-sm font-semibold text-gray-300 mb-2">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required class="w-full bg-[#18152e] text-white border border-[#3a3560] rounded-xl px-4 py-3 focus:outline-none focus:border-[#00f0ff]" />
+      </div>
+      
+      <p id="loginError" class="text-[#ff007f] text-sm mb-4 min-h-[1.25rem]"></p>
+      <button type="submit" class="w-full bg-gradient-to-r from-[#00f0ff] to-[#0099ff] text-[#041018] font-bold py-3 rounded-xl hover:opacity-90 transition-opacity">Log in</button>
     </form>
   </div>
 
-  <div id="appView" hidden>
-    <header>
-      <div>
-        <h1 class="flex items-center gap-2"><img src="assets/images/logo.png?v=2" alt="" class="h-10 w-10 rounded-full object-cover" /> Owner panel</h1>
-        <a href="index.html">View website</a>
+  <div id="appView" hidden class="max-w-5xl mx-auto px-4 lg:px-8 pb-12">
+    <header class="flex flex-col sm:flex-row items-center justify-between gap-4 py-6 border-b border-[#2b274c] mb-6">
+      <div class="flex items-center gap-3 w-full sm:w-auto">
+        <img src="assets/images/logo.png?v=2" alt="" class="h-12 w-12 rounded-full border border-[#00f0ff]" />
+        <div>
+          <h1 class="text-xl font-bold text-white">Owner Panel</h1>
+          <a href="index.html" class="text-xs text-[#00f0ff] hover:underline">← View website</a>
+        </div>
       </div>
-      <button id="logoutBtn" class="ghost" type="button">Log out</button>
+      <button id="logoutBtn" type="button" class="w-full sm:w-auto bg-[#17152b] text-white border border-[#2b274c] px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-[#2b274c] transition-colors">Log out</button>
     </header>
+
     <main>
-      <div class="tabs" role="tablist">
-        <button type="button" class="ghost" data-tab="flyers" aria-selected="true">Flyers</button>
-        <button type="button" class="ghost" data-tab="editor" aria-selected="false">Add flyer</button>
-        <button type="button" class="ghost" data-tab="bookings" aria-selected="false">Bookings</button>
-        <button type="button" class="ghost" data-tab="messages" aria-selected="false">Messages</button>
+      <div class="tabs flex gap-2 overflow-x-auto pb-4 scrollbar-none mb-6" role="tablist">
+        <button type="button" class="whitespace-nowrap px-4 py-2 rounded-full border border-[#2b274c] bg-[#17152b] text-gray-300 text-sm font-semibold" data-tab="flyers" aria-selected="true">Flyers</button>
+        <button type="button" class="whitespace-nowrap px-4 py-2 rounded-full border border-[#2b274c] bg-[#17152b] text-gray-300 text-sm font-semibold" data-tab="editor" aria-selected="false">Add flyer</button>
+        <button type="button" class="whitespace-nowrap px-4 py-2 rounded-full border border-[#2b274c] bg-[#17152b] text-gray-300 text-sm font-semibold" data-tab="bookings" aria-selected="false">Bookings</button>
+        <button type="button" class="whitespace-nowrap px-4 py-2 rounded-full border border-[#2b274c] bg-[#17152b] text-gray-300 text-sm font-semibold" data-tab="messages" aria-selected="false">Messages</button>
       </div>
 
       <section id="flyers" class="panel active"></section>
 
       <section id="editor" class="panel">
-        <form id="eventForm" class="card">
-          <h2 id="formTitle">Add a flyer</h2>
+        <form id="eventForm" class="bg-[#100e21] border border-[#2b274c] rounded-2xl p-5 md:p-8">
+          <h2 id="formTitle" class="text-xl font-bold text-white mb-6">Add a flyer</h2>
           <input type="hidden" id="eventId" />
-          <label for="flyerFile">Original flyer photo</label>
-          <input id="flyerFile" type="file" accept="image/jpeg,image/png,image/webp" />
-          <img id="flyerPreview" class="preview" alt="" hidden />
-          <label for="eventName">Event name</label>
-          <input id="eventName" required placeholder="City Showdown ft. Shubz" />
-          <div class="row two">
+          
+          <div class="mb-5">
+            <label for="flyerFile" class="block text-sm font-semibold text-gray-300 mb-2">Original flyer photo</label>
+            <input id="flyerFile" type="file" accept="image/jpeg,image/png,image/webp" class="w-full text-sm text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#18152e] file:text-[#00f0ff] hover:file:bg-[#2b274c] cursor-pointer" />
+            <img id="flyerPreview" class="w-full max-w-[200px] mt-4 rounded-xl border border-[#3a3560]" alt="" hidden />
+          </div>
+
+          <div class="mb-5">
+            <label for="eventName" class="block text-sm font-semibold text-gray-300 mb-2">Event name</label>
+            <input id="eventName" required placeholder="City Showdown ft. Shubz" class="w-full bg-[#18152e] text-white border border-[#3a3560] rounded-xl px-4 py-3 focus:outline-none focus:border-[#00f0ff]" />
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
             <div>
-              <label for="eventDate">Date and time</label>
-              <input id="eventDate" required placeholder="Sat, 12 Sep • 8:00 PM" />
+              <label for="eventStart" class="block text-sm font-semibold text-gray-300 mb-2">Launch Date & Time</label>
+              <input id="eventStart" type="datetime-local" required class="w-full bg-[#18152e] text-gray-300 border border-[#3a3560] rounded-xl px-4 py-3 focus:outline-none focus:border-[#00f0ff] [color-scheme:dark]" />
             </div>
             <div>
-              <label for="eventVenue">Venue</label>
-              <input id="eventVenue" required placeholder="Raasta, Nagpur" />
+              <label for="eventEnd" class="block text-sm font-semibold text-gray-300 mb-2">Ending Date & Time</label>
+              <input id="eventEnd" type="datetime-local" required class="w-full bg-[#18152e] text-gray-300 border border-[#3a3560] rounded-xl px-4 py-3 focus:outline-none focus:border-[#00f0ff] [color-scheme:dark]" />
             </div>
           </div>
-          <div class="row two">
+          <div class="mb-5">
+            <label for="eventVenue" class="block text-sm font-semibold text-gray-300 mb-2">Venue</label>
+            <select id="eventVenue" required class="w-full bg-[#18152e] text-white border border-[#3a3560] rounded-xl px-4 py-3 focus:outline-none focus:border-[#00f0ff] appearance-none">
+              <option value="" disabled selected>Select a Venue...</option>
+              <option value="Agent Jack's Nagpur">Agent Jack's Nagpur</option>
+              <option value="Warehouse Cafe' Nagpur">Warehouse Cafe' Nagpur</option>
+              <option value="Raasta Nagpur">Raasta Nagpur</option>
+              <option value="Hitchki Nagpur">Hitchki Nagpur</option>
+              <option value="ICE-CUBE">ICE-CUBE</option>
+              <option value="Romeo Lane Nagpur">Romeo Lane Nagpur</option>
+              <option value="Brillo Club & Kitchen">Brillo Club & Kitchen</option>
+              <option value="River Edge">River Edge</option>
+              <option value="SUAA Nagpur">SUAA Nagpur</option>
+              <option value="Zero Degree">Zero Degree</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
             <div>
-              <label for="eventArea">Area</label>
-              <select id="eventArea">
-                <option value="raasta">Raasta</option>
-                <option value="dharampeth">Dharampeth</option>
-                <option value="civil_lines">Civil Lines</option>
-                <option value="wardha_rd">Wardha Road</option>
-                <option value="sadar">Sadar</option>
+              <label for="eventCity" class="block text-sm font-semibold text-gray-300 mb-2">City</label>
+              <select id="eventCity" class="w-full bg-[#18152e] text-white border border-[#3a3560] rounded-xl px-4 py-3 focus:outline-none focus:border-[#00f0ff] appearance-none">
+                <option value="Nagpur">Nagpur</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Pune">Pune</option>
+                <option value="Hyderabad">Hyderabad</option>
+                <option value="Goa">Goa</option>
               </select>
             </div>
             <div>
-              <label for="eventCategory">Category</label>
-              <select id="eventCategory">
+              <label for="eventCategory" class="block text-sm font-semibold text-gray-300 mb-2">Category</label>
+              <select id="eventCategory" class="w-full bg-[#18152e] text-white border border-[#3a3560] rounded-xl px-4 py-3 focus:outline-none focus:border-[#00f0ff] appearance-none">
                 <option value="club_nights">Club nights</option>
                 <option value="concerts">Concerts</option>
                 <option value="comedy">Comedy</option>
@@ -144,24 +157,52 @@
               </select>
             </div>
           </div>
-          <div class="row two">
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
             <div>
-              <label for="couplePrice">Couple ticket price (₹)</label>
-              <input id="couplePrice" type="number" min="0" step="1" value="0" required />
+              <label for="couplePrice" class="block text-sm font-semibold text-gray-300 mb-2">Couple ticket price (₹)</label>
+              <input id="couplePrice" type="number" min="0" step="1" value="0" required class="w-full bg-[#18152e] text-white border border-[#3a3560] rounded-xl px-4 py-3 focus:outline-none focus:border-[#00f0ff]" />
             </div>
             <div>
-              <label for="stagPrice">Stag ticket price (₹)</label>
-              <input id="stagPrice" type="number" min="0" step="1" value="0" required />
+              <label for="stagPrice" class="block text-sm font-semibold text-gray-300 mb-2">Stag ticket price (₹)</label>
+              <input id="stagPrice" type="number" min="0" step="1" value="0" required class="w-full bg-[#18152e] text-white border border-[#3a3560] rounded-xl px-4 py-3 focus:outline-none focus:border-[#00f0ff]" />
             </div>
           </div>
-          <label for="offerText">Short line on the card</label>
-          <input id="offerText" placeholder="Bollywood and commercial night" />
-          <label for="badge">Artist label</label>
-          <input id="badge" placeholder="SHUBZ" />
-          <p id="formError" class="error"></p>
-          <div class="actions">
-            <button class="primary" type="submit">Save flyer</button>
-            <button class="ghost" id="cancelEdit" type="button">Clear</button>
+
+          <div class="mb-5">
+            <label for="offerText" class="block text-sm font-semibold text-gray-300 mb-2">Short line on the card</label>
+            <input id="offerText" placeholder="Bollywood and commercial night" class="w-full bg-[#18152e] text-white border border-[#3a3560] rounded-xl px-4 py-3 focus:outline-none focus:border-[#00f0ff]" />
+          </div>
+          
+          <div class="mb-5">
+            <label for="badge" class="block text-sm font-semibold text-gray-300 mb-2">Artist label</label>
+            <input id="badge" placeholder="SHUBZ" class="w-full bg-[#18152e] text-white border border-[#3a3560] rounded-xl px-4 py-3 focus:outline-none focus:border-[#00f0ff]" />
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+            <div>
+              <label for="organizerPin" class="block text-sm font-semibold text-gray-300 mb-2">Organizer PIN (4-Digits)</label>
+              <input id="organizerPin" placeholder="e.g. 1234" pattern="[0-9]{4}" maxlength="4" class="w-full bg-[#18152e] text-white border border-[#3a3560] rounded-xl px-4 py-3 focus:outline-none focus:border-[#00f0ff]" />
+              <p class="text-[10px] text-gray-500 mt-1">Leave blank if not needed.</p>
+            </div>
+            <div>
+              <label for="eventCapacity" class="block text-sm font-semibold text-gray-300 mb-2">Total Capacity</label>
+              <input id="eventCapacity" type="number" min="1" value="100" required class="w-full bg-[#18152e] text-white border border-[#3a3560] rounded-xl px-4 py-3 focus:outline-none focus:border-[#00f0ff]" />
+            </div>
+          </div>
+
+          <div class="mb-6 p-4 bg-[#141225] rounded-xl border border-[#2b274c]">
+            <h4 class="text-sm font-semibold text-[#00f0ff] mb-2">Custom Tickets (Optional)</h4>
+            <p class="text-xs text-gray-400 mb-3">If added, these will replace the standard couple/stag passes for this event.</p>
+            <div id="ticketsContainer" class="space-y-3 mb-3"></div>
+            <button type="button" onclick="addTicketRow()" class="text-xs text-[#ff007f] font-bold hover:text-white"><i class="fa-solid fa-plus mr-1"></i> Add Ticket Type</button>
+          </div>
+
+          <p id="formError" class="text-[#ff007f] text-sm mb-4 min-h-[1.25rem]"></p>
+          
+          <div class="flex flex-col sm:flex-row gap-3">
+            <button type="submit" class="w-full sm:w-auto bg-gradient-to-r from-[#00f0ff] to-[#0099ff] text-[#041018] font-bold py-3 px-8 rounded-xl hover:opacity-90 transition-opacity">Upload Template</button>
+            <button id="cancelEdit" type="button" class="w-full sm:w-auto bg-[#17152b] text-white border border-[#2b274c] py-3 px-8 rounded-xl font-semibold hover:bg-[#2b274c] transition-colors">Clear</button>
           </div>
         </form>
       </section>
@@ -170,6 +211,6 @@
       <section id="messages" class="panel"></section>
     </main>
   </div>
-  <script src="assets/js/admin.js"></script>
+  <script src="assets/js/admin.js?v=2"></script>
 </body>
 </html>

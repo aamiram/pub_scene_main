@@ -4,8 +4,30 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PUB SCENE | Nagpur's #1 Nightlife Guide & Pass Booking</title>
-  <link rel="icon" href="assets/images/logo.png?v=2" />
+  <meta name="google-site-verification" content="OwkCD7iY_BQVwav6V6fC4gcMkuI79HCFdMdgk4ni1m8" />
+  <meta name="description" content="Together, let's create unforgettable nights. Host your event, promote your club, or build custom nightlife brand campaigns." />
   
+  <!-- Open Graph / Social Media Meta Tags -->
+  <meta property="og:title" content="PUB SCENE | Nagpur's #1 Nightlife Guide & Pass Booking" />
+  <meta property="og:description" content="Together, let's create unforgettable nights. Host your event, promote your club, or build custom nightlife brand campaigns." />
+  <meta property="og:image" content="https://pubscene.in/assets/images/logo2.jpg" />
+  <meta property="og:url" content="https://pubscene.in" />
+  <meta property="og:type" content="website" />
+  
+  <link rel="icon" href="assets/images/logo2.jpg?v=2" />
+
+  <!-- Google Structured Data for Logo and Name -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "PUB SCENE",
+    "url": "https://pubscene.in/",
+    "logo": "https://pubscene.in/assets/images/logo2.jpg",
+    "description": "Nagpur's #1 Nightlife Guide & Pass Booking"
+  }
+  </script>
+
   <!-- Tailwind CSS & Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -71,51 +93,136 @@
   <div class="relative z-10">
 
     <!-- 1. TOP NAVBAR -->
-    <header class="sticky top-0 z-50 bg-[#08080f]/90 backdrop-blur-md border-b border-[#1c1a2e]">
-      <div class="max-w-7xl mx-auto px-4 lg:px-8 py-3 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        
-        <!-- Logo -->
-        <a href="#" class="flex items-center shrink-0" aria-label="PUB SCENE Nagpur">
-          <img src="assets/images/logo.png?v=2" alt="PUB SCENE" class="h-14 w-14 sm:h-16 sm:w-16 rounded-full object-cover" />
-        </a>
-
-        <!-- Search Bar with Live Filter -->
-        <div class="flex flex-1 md:max-w-md md:mx-6 relative">
-          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-500 text-xs"></i>
-          <input type="text" id="mainSearchInput" placeholder="Search events, artists, venues..." 
-                 class="w-full bg-[#100f1c] text-base text-gray-200 pl-9 pr-4 py-3 rounded-full border border-[#26243d] focus:outline-none focus:border-[#00f0ff] transition-all" />
-        </div>
-
-        <!-- City Dropdown & Nav Links -->
-        <div class="flex flex-wrap items-center gap-2 sm:gap-4 text-xs font-semibold relative">
+    <header class="sticky top-0 z-[60] bg-[#000000] border-b border-[#1c1a2e]">
+      
+      <!-- MOBILE HEADER -->
+      <div class="md:hidden flex flex-col pb-3">
+        <div class="flex items-center justify-between px-4 py-3">
+          <!-- Left: Grid Menu -->
           <div class="relative">
-            <button type="button" id="cityDropdownBtn" class="tap flex items-center gap-1.5 bg-[#121124] border border-[#2b274c] px-3 py-2 rounded-full hover:border-[#00f0ff]">
-              <i class="fa-solid fa-location-dot text-[#ff007f]"></i>
-              <span id="currentCityDisplay" class="text-gray-200">Nagpur (All)</span>
-              <i class="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
+            <button type="button" class="text-white p-2 hover:text-gray-300" onclick="document.getElementById('mobileGridMenu').classList.toggle('hidden')">
+              <i class="fa-solid fa-table-cells text-[22px]"></i>
             </button>
-
-            <!-- Dropdown Menu -->
-            <div id="cityDropdownMenu" class="hidden absolute top-full mt-2 right-0 w-44 bg-[#100e21] border border-[#2b274c] rounded-xl shadow-2xl py-1 z-50">
-              <button type="button" data-area="all" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">All Nagpur</button>
-              <button type="button" data-area="dharampeth" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">Dharampeth</button>
-              <button type="button" data-area="civil_lines" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">Civil Lines</button>
-              <button type="button" data-area="wardha_rd" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">Wardha Road</button>
-              <button type="button" data-area="sadar" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">Sadar</button>
-              <button type="button" data-area="raasta" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">Raasta</button>
+            <div id="mobileGridMenu" class="hidden absolute top-full mt-2 left-2 w-56 bg-white border border-gray-200 rounded-lg shadow-2xl py-2 z-50 text-black">
+              <p class="px-4 py-2 text-[10px] font-bold text-gray-500 uppercase tracking-wide">Business</p>
+              <a href="admin.html" class="block px-4 py-2 text-sm font-medium hover:bg-gray-100"><i class="fa-solid fa-user-tie mr-2 text-gray-400"></i>Owner Panel (Admin)</a>
+              <a href="#" onclick="document.getElementById('mobileGridMenu').classList.add('hidden'); openCollabModal();" class="block px-4 py-2 text-sm font-medium hover:bg-gray-100"><i class="fa-solid fa-handshake mr-2 text-gray-400"></i>Collabs</a>
+              <a href="#events" onclick="document.getElementById('mobileGridMenu').classList.add('hidden');" class="block px-4 py-2 text-sm font-medium hover:bg-gray-100"><i class="fa-solid fa-calendar-days mr-2 text-gray-400"></i>Upcoming Events (Templates)</a>
             </div>
           </div>
           
-          <a href="#events" class="hidden sm:inline-block text-gray-400 hover:text-white">Events</a>
-          <a href="#venues" class="hidden sm:inline-block text-gray-400 hover:text-white">Venues</a>
-          <a href="#collab" class="hidden sm:inline-block text-gray-400 hover:text-white">Join us</a>
+          <!-- Center: Logo with City Pin & Insta -->
+          <div class="flex flex-row items-center gap-3 relative">
+            <div class="flex flex-row items-center justify-center gap-1.5 cursor-pointer" onclick="document.getElementById('mobileCityMenu').classList.toggle('hidden')">
+              <i class="fa-solid fa-location-dot text-[#ff007f] text-sm md:text-base"></i>
+              <img src="assets/images/logo2.jpg" alt="PUB SCENE" class="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover shadow-[0_0_15px_rgba(255,0,127,0.4)] border border-[#ff007f]/30" />
+            </div>
+            <a href="https://www.instagram.com/pubscene?vrfl=ZWYyYWc4aDQwZ2Jk" target="_blank" class="text-white hover:text-[#ff007f] text-lg">
+              <i class="fa-brands fa-instagram"></i>
+            </a>
+            <!-- Mobile City Menu -->
+            <div id="mobileCityMenu" class="hidden absolute top-full mt-2 left-1/2 -translate-x-1/2 w-44 bg-[#100e21] border border-[#2b274c] rounded-xl shadow-2xl py-1 z-50">
+              <p class="px-3 py-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-wider">Select City</p>
+              <button type="button" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">Nagpur</button>
+              <button type="button" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">Mumbai</button>
+              <button type="button" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">Pune</button>
+              <button type="button" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">Hyderabad</button>
+              <button type="button" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">Goa</button>
+            </div>
+          </div>
 
-          <button type="button" id="loginBookBtn" class="tap btn-neon-primary px-4 py-2 rounded-full text-xs">
-            Book a pass
-          </button>
+          <!-- Right: Profile Dropdown -->
+          <div class="relative">
+            <button type="button" class="flex items-center gap-1 text-white p-2 hover:text-gray-300" onclick="document.getElementById('mobileUserMenu').classList.toggle('hidden')">
+              <i class="fa-regular fa-circle-user text-2xl"></i>
+              <i class="fa-solid fa-chevron-down text-[10px]"></i>
+            </button>
+            <!-- User Dropdown Menu -->
+            <div id="mobileUserMenu" class="hidden absolute top-full mt-2 right-0 w-48 bg-white border border-gray-200 rounded-lg shadow-2xl py-2 z-50 text-black">
+              <p class="px-4 py-2 text-[10px] font-bold text-gray-500 uppercase tracking-wide">Account</p>
+              <a href="#" onclick="document.getElementById('mobileUserMenu').classList.add('hidden'); alert('User Login coming soon!');" class="block px-4 py-2 text-sm font-medium hover:bg-gray-100"><i class="fa-solid fa-user mr-2 text-gray-400"></i>Login</a>
+              <a href="#" onclick="document.getElementById('mobileUserMenu').classList.add('hidden'); alert('Referral program coming soon!');" class="block px-4 py-2 text-sm font-medium hover:bg-gray-100"><i class="fa-solid fa-gift mr-2 text-gray-400"></i>Referral</a>
+              <div class="border-t border-gray-100 my-1"></div>
+              <a href="#" onclick="alert('My Tickets coming soon!')" class="block px-4 py-2 text-sm font-medium hover:bg-gray-100"><i class="fa-solid fa-ticket mr-2 text-gray-400"></i>My Tickets</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Mobile Search Bar -->
+        <div class="px-4 mt-1">
+          <div class="relative w-full">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-500 text-xs"></i>
+            <input type="text" id="mobileSearchInput" placeholder="Search events, artists, venues..." 
+                   class="w-full bg-[#100f1c] text-sm text-gray-200 pl-9 pr-4 py-2.5 rounded-full border border-[#26243d] focus:outline-none focus:border-[#00f0ff] transition-all" />
+          </div>
+        </div>
+      </div>
+
+      <!-- DESKTOP HEADER -->
+      <div class="hidden md:flex max-w-7xl mx-auto px-4 lg:px-8 py-3 items-center justify-between gap-6">
+        <div class="flex items-center gap-4 shrink-0">
+          <div class="relative">
+            <button type="button" class="text-white p-2 hover:text-gray-300" onclick="document.getElementById('desktopGridMenu').classList.toggle('hidden')">
+              <i class="fa-solid fa-table-cells text-[22px]"></i>
+            </button>
+            <div id="desktopGridMenu" class="hidden absolute top-full mt-2 left-0 w-56 bg-white border border-gray-200 rounded-lg shadow-2xl py-2 z-50 text-black">
+              <p class="px-4 py-2 text-[10px] font-bold text-gray-500 uppercase tracking-wide">Business</p>
+              <a href="admin.html" class="block px-4 py-2 text-sm font-medium hover:bg-gray-100"><i class="fa-solid fa-user-tie mr-2 text-gray-400"></i>Owner Panel (Admin)</a>
+              <a href="#" onclick="document.getElementById('desktopGridMenu').classList.add('hidden'); openCollabModal();" class="block px-4 py-2 text-sm font-medium hover:bg-gray-100"><i class="fa-solid fa-handshake mr-2 text-gray-400"></i>Collabs</a>
+              <a href="#events" onclick="document.getElementById('desktopGridMenu').classList.add('hidden');" class="block px-4 py-2 text-sm font-medium hover:bg-gray-100"><i class="fa-solid fa-calendar-days mr-2 text-gray-400"></i>Upcoming Events (Templates)</a>
+            </div>
+          </div>
+          <a href="#" class="flex items-center shrink-0" aria-label="PUB SCENE">
+            <img src="assets/images/logo2.jpg" alt="PUB SCENE" class="h-12 w-12 rounded-full object-cover shadow-[0_0_15px_rgba(255,0,127,0.4)] border border-[#ff007f]/30" />
+          </a>
+        </div>
+
+        <div class="flex-1 max-w-md relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-gray-500 text-xs"></i>
+          <input type="text" id="mainSearchInput" placeholder="Search events, artists, venues..." 
+                 class="w-full bg-[#100f1c] text-sm text-gray-200 pl-9 pr-4 py-2.5 rounded-full border border-[#26243d] focus:outline-none focus:border-[#00f0ff] transition-all" />
+        </div>
+
+        <div class="flex items-center gap-5 text-xs font-semibold relative">
+          <div class="relative">
+            <button type="button" class="tap flex items-center gap-1.5 bg-[#121124] border border-[#2b274c] px-4 py-2 rounded-full hover:border-[#00f0ff]" onclick="document.getElementById('desktopCityMenu').classList.toggle('hidden')">
+              <i class="fa-solid fa-location-dot text-[#ff007f]"></i>
+              <span class="text-sm text-gray-200">Cities</span>
+              <i class="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
+            </button>
+            <div id="desktopCityMenu" class="hidden absolute top-full mt-2 right-0 w-44 bg-[#100e21] border border-[#2b274c] rounded-xl shadow-2xl py-1 z-50">
+              <p class="px-3 py-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-wider">Select City</p>
+              <button type="button" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">Nagpur</button>
+              <button type="button" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">Mumbai</button>
+              <button type="button" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">Pune</button>
+              <button type="button" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">Hyderabad</button>
+              <button type="button" class="w-full text-left px-3 py-2 text-xs text-white hover:bg-[#1f1b3b]">Goa</button>
+            </div>
+          </div>
+          
+          <a href="#events" class="text-gray-300 hover:text-white text-sm">Events</a>
+          <a href="#venues" class="text-gray-300 hover:text-white text-sm">Venues</a>
+          <a href="#collab" class="text-gray-300 hover:text-white text-sm">Organize</a>
+
+          <!-- Profile / Dropdown Desktop -->
+          <div class="relative ml-2">
+            <button type="button" class="flex items-center gap-1 text-white hover:text-gray-300" onclick="document.getElementById('desktopUserMenu').classList.toggle('hidden')">
+              <i class="fa-regular fa-circle-user text-[28px]"></i>
+              <i class="fa-solid fa-chevron-down text-[10px]"></i>
+            </button>
+            <div id="desktopUserMenu" class="hidden absolute top-full mt-2 right-0 w-52 bg-white rounded-lg shadow-2xl py-2 z-50 text-black">
+              <p class="px-4 py-2 text-[10px] font-bold text-gray-500 uppercase tracking-wide">Account</p>
+              <a href="#" onclick="document.getElementById('desktopUserMenu').classList.add('hidden'); alert('User Login coming soon!');" class="block px-4 py-2 text-sm font-medium hover:bg-gray-100"><i class="fa-solid fa-user mr-2 text-gray-400"></i>Login</a>
+              <a href="#" onclick="document.getElementById('desktopUserMenu').classList.add('hidden'); alert('Referral program coming soon!');" class="block px-4 py-2 text-sm font-medium hover:bg-gray-100"><i class="fa-solid fa-gift mr-2 text-gray-400"></i>Referral</a>
+              <div class="border-t border-gray-100 my-1"></div>
+              <a href="#" onclick="alert('My Tickets coming soon!')" class="block px-4 py-2 text-sm font-medium hover:bg-gray-100"><i class="fa-solid fa-ticket mr-2 text-gray-400"></i>My Tickets</a>
+            </div>
+          </div>
         </div>
       </div>
     </header>
+
+
 
     <!-- 2. HERO CAROUSEL -->
     <section class="max-w-7xl mx-auto px-4 lg:px-8 pt-6 pb-4">
@@ -132,7 +239,7 @@
             Follow your friends, discover crowd ratios, and spot the party scene at every club in Nagpur.
           </p>
           <a href="#events" class="tap inline-flex items-center gap-2 btn-neon-primary px-5 py-2.5 rounded-lg text-sm">
-            <span>Find your people</span>
+            <span>Best upcoming event</span>
             <i class="fa-solid fa-arrow-right text-[11px]"></i>
           </a>
         </div>
@@ -164,61 +271,188 @@
       <div id="eventsGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5"></div>
     </section>
 
-    <!-- 5. TOP ORGANIZERS & VENUES -->
-    <section id="venues" class="max-w-7xl mx-auto px-4 lg:px-8 py-8">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg md:text-xl font-bold text-white">Top organizers in Nagpur</h2>
-        <a href="#venues" id="seeAllVenues" class="text-xs text-[#00f0ff] font-semibold hover:underline">See all →</a>
+    <!-- 5. TOP VENUES IN NAGPUR -->
+    <section id="venues" class="max-w-7xl mx-auto px-4 lg:px-8 py-10">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h2 class="text-xl md:text-3xl font-bold text-white mb-1">Top Venues in Nagpur</h2>
+          <p class="text-xs text-gray-400">Discover the most premium clubs and resto-bars</p>
+        </div>
+        <a href="#venues" id="seeAllVenues" class="text-xs text-[#ff007f] font-semibold hover:underline bg-[#ff007f]/10 px-3 py-1.5 rounded-full border border-[#ff007f]/20">View All</a>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="bg-[#100e21] border border-[#2b274c] rounded-xl p-4 flex flex-col justify-between">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-[#1e1b38] border border-[#00f0ff]/40 flex items-center justify-center text-sm font-bold text-[#00f0ff]">
-              VIBE
-            </div>
-            <div>
-              <h4 class="text-xs font-bold text-white flex items-center gap-1">The Vibe Club <i class="fa-solid fa-circle-check text-[#00f0ff] text-[10px]"></i></h4>
-              <p class="text-[10px] text-gray-400">Dharampeth, Nagpur • ★ 5.0</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        
+        <!-- Agent Jack's -->
+        <div class="bg-[#0c0a1a] border border-[#2b274c] rounded-2xl overflow-hidden group hover:border-[#ff007f]/50 transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(255,0,127,0.15)] flex flex-col">
+          <div class="relative h-48 overflow-hidden">
+            <img src="assets/images/agent_jacks.jpg" alt="Agent Jack's Nagpur" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0c0a1a] via-black/40 to-transparent"></div>
+            <span class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full border border-white/10"><i class="fa-solid fa-star text-yellow-400 mr-1"></i>4.9</span>
+            <span class="absolute bottom-3 left-4 text-[#ff007f] text-[10px] font-black uppercase tracking-widest bg-black/50 px-2 py-1 rounded">Interactive Resto-Bar</span>
+          </div>
+          <div class="p-5 flex-1 flex flex-col">
+            <h3 class="text-lg font-black text-white mb-2 group-hover:text-[#ff007f] transition-colors">Agent Jack's Nagpur</h3>
+            <p class="text-xs text-gray-400 leading-relaxed mb-5 line-clamp-3">Concept bar with app-based drink bidding, signature DJ party nights, and multi-cuisine bar bites.</p>
+            <div class="mt-auto">
+              <button class="w-full bg-[#16132d] hover:bg-[#ff007f] text-white text-xs font-bold py-2.5 rounded-xl transition-colors shadow-inner border border-white/5">View Venue</button>
             </div>
           </div>
-          <p class="text-[11px] text-gray-400 mt-3">Curating exclusive underground techno sessions & rooftop electronic jams.</p>
-          <button type="button" data-organizer-id="org-1" class="follow-btn mt-4 w-full bg-[#17152e] text-gray-200 border border-[#2e2a52] py-1.5 rounded-lg text-xs font-semibold">
-            + Follow
-          </button>
         </div>
 
-        <div class="bg-[#100e21] border border-[#2b274c] rounded-xl p-4 flex flex-col justify-between">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-[#1e1b38] border border-[#ff007f]/40 flex items-center justify-center text-sm font-bold text-[#ff007f]">
-              CGC
-            </div>
-            <div>
-              <h4 class="text-xs font-bold text-white flex items-center gap-1">Common Ground Club <i class="fa-solid fa-circle-check text-[#ff007f] text-[10px]"></i></h4>
-              <p class="text-[10px] text-gray-400">Civil Lines, Nagpur • ★ 4.9</p>
+        <!-- Warehouse Cafe -->
+        <div class="bg-[#0c0a1a] border border-[#2b274c] rounded-2xl overflow-hidden group hover:border-[#ff007f]/50 transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(255,0,127,0.15)] flex flex-col">
+          <div class="relative h-48 overflow-hidden">
+            <img src="assets/images/warehouse_cafe.jpg" alt="Warehouse Cafe Nagpur" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0c0a1a] via-black/40 to-transparent"></div>
+            <span class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full border border-white/10"><i class="fa-solid fa-star text-yellow-400 mr-1"></i>4.8</span>
+            <span class="absolute bottom-3 left-4 text-[#00f0ff] text-[10px] font-black uppercase tracking-widest bg-black/50 px-2 py-1 rounded">Cafe / Nightclub</span>
+          </div>
+          <div class="p-5 flex-1 flex flex-col">
+            <h3 class="text-lg font-black text-white mb-2 group-hover:text-[#00f0ff] transition-colors">Warehouse Cafe'</h3>
+            <p class="text-xs text-gray-400 leading-relaxed mb-5 line-clamp-3">Day-to-night transformation (classy cafe by day, high-energy party lounge/club with Sufi & live music by night).</p>
+            <div class="mt-auto">
+              <button class="w-full bg-[#16132d] hover:bg-[#00f0ff] hover:text-black text-white text-xs font-bold py-2.5 rounded-xl transition-colors shadow-inner border border-white/5">View Venue</button>
             </div>
           </div>
-          <p class="text-[11px] text-gray-400 mt-3">A space for music, dance, community jams, and weekend nightlife vibes.</p>
-          <button type="button" data-organizer-id="org-2" class="follow-btn mt-4 w-full bg-[#17152e] text-gray-200 border border-[#2e2a52] py-1.5 rounded-lg text-xs font-semibold">
-            + Follow
-          </button>
         </div>
 
-        <div class="bg-[#100e21] border border-[#2b274c] rounded-xl p-4 flex flex-col justify-between">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-[#1e1b38] border border-purple-500/40 flex items-center justify-center text-sm font-bold text-purple-400">
-              909
-            </div>
-            <div>
-              <h4 class="text-xs font-bold text-white flex items-center gap-1">Nine O Nine Lounge <i class="fa-solid fa-circle-check text-[#00f0ff] text-[10px]"></i></h4>
-              <p class="text-[10px] text-gray-400">Wardha Road, Nagpur • ★ 4.8</p>
+        <!-- Raasta -->
+        <div class="bg-[#0c0a1a] border border-[#2b274c] rounded-2xl overflow-hidden group hover:border-[#ff007f]/50 transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(255,0,127,0.15)] flex flex-col">
+          <div class="relative h-48 overflow-hidden">
+            <img src="assets/images/raasta.jpg" alt="Raasta Nagpur" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0c0a1a] via-black/40 to-transparent"></div>
+            <span class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full border border-white/10"><i class="fa-solid fa-star text-yellow-400 mr-1"></i>4.9</span>
+            <span class="absolute bottom-3 left-4 text-[#ffcc00] text-[10px] font-black uppercase tracking-widest bg-black/50 px-2 py-1 rounded">Rooftop Lounge</span>
+          </div>
+          <div class="p-5 flex-1 flex flex-col">
+            <h3 class="text-lg font-black text-white mb-2 group-hover:text-[#ffcc00] transition-colors">Raasta Nagpur</h3>
+            <p class="text-xs text-gray-400 leading-relaxed mb-5 line-clamp-3">One of the highest rooftop lounges in the city, offering Caribbean aesthetics, cocktails, and curated DJ/artist nights.</p>
+            <div class="mt-auto">
+              <button class="w-full bg-[#16132d] hover:bg-[#ffcc00] hover:text-black text-white text-xs font-bold py-2.5 rounded-xl transition-colors shadow-inner border border-white/5">View Venue</button>
             </div>
           </div>
-          <p class="text-[11px] text-gray-400 mt-3">Nagpur’s high-energy lounge featuring Bollywood DJ nights & craft beer.</p>
-          <button type="button" data-organizer-id="org-3" class="follow-btn mt-4 w-full bg-[#17152e] text-gray-200 border border-[#2e2a52] py-1.5 rounded-lg text-xs font-semibold">
-            + Follow
-          </button>
         </div>
+
+        <!-- Hitchki -->
+        <div class="bg-[#0c0a1a] border border-[#2b274c] rounded-2xl overflow-hidden group hover:border-[#ff007f]/50 transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(255,0,127,0.15)] flex flex-col">
+          <div class="relative h-48 overflow-hidden">
+            <img src="assets/images/hitchki.jpg" alt="Hitchki Nagpur" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0c0a1a] via-black/40 to-transparent"></div>
+            <span class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full border border-white/10"><i class="fa-solid fa-star text-yellow-400 mr-1"></i>4.7</span>
+            <span class="absolute bottom-3 left-4 text-[#ff007f] text-[10px] font-black uppercase tracking-widest bg-black/50 px-2 py-1 rounded">Retro Resto-Club</span>
+          </div>
+          <div class="p-5 flex-1 flex flex-col">
+            <h3 class="text-lg font-black text-white mb-2 group-hover:text-[#ff007f] transition-colors">Hitchki Nagpur</h3>
+            <p class="text-xs text-gray-400 leading-relaxed mb-5 line-clamp-3">90s/Bollywood retro vibes, dining, corporate lunches, cocktails, and a rooftop club atmosphere.</p>
+            <div class="mt-auto">
+              <button class="w-full bg-[#16132d] hover:bg-[#ff007f] text-white text-xs font-bold py-2.5 rounded-xl transition-colors shadow-inner border border-white/5">View Venue</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ICE-CUBE -->
+        <div class="bg-[#0c0a1a] border border-[#2b274c] rounded-2xl overflow-hidden group hover:border-[#00f0ff]/50 transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(0,240,255,0.15)] flex flex-col">
+          <div class="relative h-48 overflow-hidden">
+            <img src="assets/images/ice_cube.jpg" alt="ICE-CUBE" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0c0a1a] via-black/40 to-transparent"></div>
+            <span class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full border border-white/10"><i class="fa-solid fa-star text-yellow-400 mr-1"></i>4.8</span>
+            <span class="absolute bottom-3 left-4 text-[#00f0ff] text-[10px] font-black uppercase tracking-widest bg-black/50 px-2 py-1 rounded">Dance & Nightclub</span>
+          </div>
+          <div class="p-5 flex-1 flex flex-col">
+            <h3 class="text-lg font-black text-white mb-2 group-hover:text-[#00f0ff] transition-colors">ICE-CUBE</h3>
+            <p class="text-xs text-gray-400 leading-relaxed mb-5 line-clamp-3">High-energy dance club with DJ guestlists, nightlife madness, and lounge seating.</p>
+            <div class="mt-auto">
+              <button class="w-full bg-[#16132d] hover:bg-[#00f0ff] hover:text-black text-white text-xs font-bold py-2.5 rounded-xl transition-colors shadow-inner border border-white/5">View Venue</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Romeo Lane -->
+        <div class="bg-[#0c0a1a] border border-[#2b274c] rounded-2xl overflow-hidden group hover:border-[#ffb700]/50 transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(255,183,0,0.15)] flex flex-col">
+          <div class="relative h-48 overflow-hidden">
+            <img src="assets/images/romeo_lane.jpg" alt="Romeo Lane Nagpur" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0c0a1a] via-black/40 to-transparent"></div>
+            <span class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full border border-white/10"><i class="fa-solid fa-star text-yellow-400 mr-1"></i>4.9</span>
+            <span class="absolute bottom-3 left-4 text-[#ffb700] text-[10px] font-black uppercase tracking-widest bg-black/50 px-2 py-1 rounded">Luxury Resto-Bar</span>
+          </div>
+          <div class="p-5 flex-1 flex flex-col">
+            <h3 class="text-lg font-black text-white mb-2 group-hover:text-[#ffb700] transition-colors">Romeo Lane Nagpur</h3>
+            <p class="text-xs text-gray-400 leading-relaxed mb-5 line-clamp-3">Aesthetic sunset lounge with craft cocktails, lit party nights, and upscale dining.</p>
+            <div class="mt-auto">
+              <button class="w-full bg-[#16132d] hover:bg-[#ffb700] hover:text-black text-white text-xs font-bold py-2.5 rounded-xl transition-colors shadow-inner border border-white/5">View Venue</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Brillo Club & Kitchen -->
+        <div class="bg-[#0c0a1a] border border-[#2b274c] rounded-2xl overflow-hidden group hover:border-[#d4af37]/50 transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(212,175,55,0.15)] flex flex-col">
+          <div class="relative h-48 overflow-hidden">
+            <img src="assets/images/brillo.jpg" alt="Brillo Club & Kitchen" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0c0a1a] via-black/40 to-transparent"></div>
+            <span class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full border border-white/10"><i class="fa-solid fa-star text-yellow-400 mr-1"></i>5.0</span>
+            <span class="absolute bottom-3 left-4 text-[#d4af37] text-[10px] font-black uppercase tracking-widest bg-black/50 px-2 py-1 rounded">Fine Dine / Club</span>
+          </div>
+          <div class="p-5 flex-1 flex flex-col">
+            <h3 class="text-lg font-black text-white mb-2 group-hover:text-[#d4af37] transition-colors">Brillo Club & Kitchen</h3>
+            <p class="text-xs text-gray-400 leading-relaxed mb-5 line-clamp-3">Luxury dining meets high-octane clubbing with themed events like KASOLE nights, Halloween, and Disco Sundays.</p>
+            <div class="mt-auto">
+              <button class="w-full bg-[#16132d] hover:bg-[#d4af37] hover:text-black text-white text-xs font-bold py-2.5 rounded-xl transition-colors shadow-inner border border-white/5">View Venue</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- River Edge -->
+        <div class="bg-[#0c0a1a] border border-[#2b274c] rounded-2xl overflow-hidden group hover:border-[#00f0ff]/50 transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(0,240,255,0.15)] flex flex-col">
+          <div class="relative h-48 overflow-hidden">
+            <img src="assets/images/river_edge.jpg" alt="River Edge" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0c0a1a] via-black/40 to-transparent"></div>
+            <span class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full border border-white/10"><i class="fa-solid fa-star text-yellow-400 mr-1"></i>4.7</span>
+            <span class="absolute bottom-3 left-4 text-[#00f0ff] text-[10px] font-black uppercase tracking-widest bg-black/50 px-2 py-1 rounded">Riverside Lounge</span>
+          </div>
+          <div class="p-5 flex-1 flex flex-col">
+            <h3 class="text-lg font-black text-white mb-2 group-hover:text-[#00f0ff] transition-colors">River Edge</h3>
+            <p class="text-xs text-gray-400 leading-relaxed mb-5 line-clamp-3">Waterfront open-air dining, luxury nightlife club, and event space located in Hingna.</p>
+            <div class="mt-auto">
+              <button class="w-full bg-[#16132d] hover:bg-[#00f0ff] hover:text-black text-white text-xs font-bold py-2.5 rounded-xl transition-colors shadow-inner border border-white/5">View Venue</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUAA Club and Restro -->
+        <div class="bg-[#0c0a1a] border border-[#2b274c] rounded-2xl overflow-hidden group hover:border-[#ff007f]/50 transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(255,0,127,0.15)] flex flex-col">
+          <div class="relative h-48 overflow-hidden">
+            <img src="assets/images/suaa.jpg" alt="SUAA Club and Restro" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0c0a1a] via-black/40 to-transparent"></div>
+            <span class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full border border-white/10"><i class="fa-solid fa-star text-yellow-400 mr-1"></i>4.6</span>
+            <span class="absolute bottom-3 left-4 text-[#ff007f] text-[10px] font-black uppercase tracking-widest bg-black/50 px-2 py-1 rounded">Club & Restro-Bar</span>
+          </div>
+          <div class="p-5 flex-1 flex flex-col">
+            <h3 class="text-lg font-black text-white mb-2 group-hover:text-[#ff007f] transition-colors">SUAA Club and Restro</h3>
+            <p class="text-xs text-gray-400 leading-relaxed mb-5 line-clamp-3">Sadar-based nightlife destination focusing on unplugged music, club nights, and culinary dining.</p>
+            <div class="mt-auto">
+              <button class="w-full bg-[#16132d] hover:bg-[#ff007f] text-white text-xs font-bold py-2.5 rounded-xl transition-colors shadow-inner border border-white/5">View Venue</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Zero Degree Lounge -->
+        <div class="bg-[#0c0a1a] border border-[#2b274c] rounded-2xl overflow-hidden group hover:border-[#a020f0]/50 transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(160,32,240,0.15)] flex flex-col">
+          <div class="relative h-48 overflow-hidden">
+            <img src="assets/images/zero_degree.jpg" alt="Zero Degree Lounge" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0c0a1a] via-black/40 to-transparent"></div>
+            <span class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full border border-white/10"><i class="fa-solid fa-star text-yellow-400 mr-1"></i>4.8</span>
+            <span class="absolute bottom-3 left-4 text-[#a020f0] text-[10px] font-black uppercase tracking-widest bg-black/50 px-2 py-1 rounded">Rooftop Club</span>
+          </div>
+          <div class="p-5 flex-1 flex flex-col">
+            <h3 class="text-lg font-black text-white mb-2 group-hover:text-[#a020f0] transition-colors">Zero Degree Lounge</h3>
+            <p class="text-xs text-gray-400 leading-relaxed mb-5 line-clamp-3">Energetic rooftop club in Wanadongri known for campus/student crowds, Bollywood DJ sets, and ladies' nights.</p>
+            <div class="mt-auto">
+              <button class="w-full bg-[#16132d] hover:bg-[#a020f0] text-white text-xs font-bold py-2.5 rounded-xl transition-colors shadow-inner border border-white/5">View Venue</button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -283,8 +517,17 @@
     <!-- 8. FOOTER -->
     <footer class="border-t border-[#1a182c] bg-[#050508] py-8 px-4 text-xs text-gray-400 text-center">
       <p>© 2026 PUB SCENE Nagpur. Powered by Razorpay & SQLite.</p>
-      <p class="mt-2"><a href="admin.html" class="text-[#00f0ff]">Owner login</a></p>
+      <div class="mt-4 flex justify-center gap-4 flex-wrap">
+        <a href="policies.html#terms" class="hover:text-white transition-colors">Terms & Conditions</a>
+        <a href="policies.html#privacy" class="hover:text-white transition-colors">Privacy Policy</a>
+        <a href="policies.html#refunds" class="hover:text-white transition-colors">Refund Policy</a>
+        <a href="policies.html#contact" class="hover:text-white transition-colors">Contact Us</a>
+      </div>
+      <p class="mt-4"><a href="admin.html" class="text-[#00f0ff]">Owner login</a></p>
     </footer>
+
+
+
 
   </div>
 
@@ -301,7 +544,7 @@
         <p class="text-[11px] text-gray-400" id="modalEventDate"></p>
         <p class="text-xs text-pink-400 mb-4" id="modalClubOffer">Couple entry free before 9:30 PM</p>
 
-        <div class="space-y-2 mb-3">
+        <div id="ticketsList" class="space-y-2 mb-3">
           <div class="flex items-center justify-between bg-[#18152e] border border-purple-800/40 rounded px-3 py-2">
             <div>
               <p class="text-xs text-white font-semibold">Couple pass</p>
@@ -358,7 +601,10 @@
         <div class="my-4 bg-white p-3 rounded-lg inline-block">
           <img id="passQRCode" src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=PUBSCENE_VALID" alt="Pass QR" class="w-32 h-32" />
         </div>
-        <p class="text-xs text-gray-300">Code: <span id="passCodeDisplay" class="font-bold text-[#00f0ff]">#PUB-0000</span></p>
+        <p class="text-xs text-gray-300 mb-5">Code: <span id="passCodeDisplay" class="font-bold text-[#00f0ff]">#PUB-0000</span></p>
+        <button type="button" onclick="window.print()" class="w-full bg-[#18152e] border border-[#3a3560] text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-[#2b274c]">
+          <i class="fa-solid fa-download"></i> Save / Screenshot Pass
+        </button>
       </div>
     </div>
   </div>
@@ -392,8 +638,273 @@
     </div>
   </div>
 
-  <script src="assets/js/data.js?v=3"></script>
-  <script src="assets/js/booking.js?v=3"></script>
-  <script src="assets/js/app.js?v=3"></script>
+  <!-- Organize Event Modal -->
+  <div id="organizeModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="bg-[#100e21] border border-[#2b274c] w-full max-w-md p-6 rounded-2xl relative shadow-2xl">
+      <button type="button" onclick="document.getElementById('organizeModal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+      <h3 class="text-xl font-bold text-white mb-4">Organize an Event</h3>
+      <form id="organizeForm" onsubmit="event.preventDefault(); submitOrganizerEvent();">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-1">Event Name</label>
+            <input type="text" id="orgEventName" required placeholder="e.g. Neon Nights" class="w-full bg-[#18152e] text-white border border-[#3a3560] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#00f0ff]" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-1">City</label>
+            <select id="orgEventCity" required class="w-full bg-[#18152e] text-white border border-[#3a3560] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#00f0ff] appearance-none">
+              <option value="Nagpur">Nagpur</option>
+              <option value="Mumbai">Mumbai</option>
+              <option value="Pune">Pune</option>
+              <option value="Hyderabad">Hyderabad</option>
+              <option value="Goa">Goa</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-1">Venue</label>
+            <select id="orgEventVenue" required class="w-full bg-[#18152e] text-white border border-[#3a3560] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#00f0ff] appearance-none">
+              <option value="" disabled selected>Select a Venue...</option>
+              <option value="Agent Jack's Nagpur">Agent Jack's Nagpur</option>
+              <option value="Warehouse Cafe' Nagpur">Warehouse Cafe' Nagpur</option>
+              <option value="Raasta Nagpur">Raasta Nagpur</option>
+              <option value="Hitchki Nagpur">Hitchki Nagpur</option>
+              <option value="ICE-CUBE">ICE-CUBE</option>
+              <option value="Romeo Lane Nagpur">Romeo Lane Nagpur</option>
+              <option value="Brillo Club & Kitchen">Brillo Club & Kitchen</option>
+              <option value="River Edge">River Edge</option>
+              <option value="SUAA Nagpur">SUAA Nagpur</option>
+              <option value="Zero Degree">Zero Degree</option>
+            </select>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold text-gray-300 mb-1">Launch Time</label>
+              <input type="datetime-local" id="orgEventStart" required class="w-full bg-[#18152e] text-gray-300 border border-[#3a3560] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#00f0ff] [color-scheme:dark]" />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-gray-300 mb-1">Ending Time</label>
+              <input type="datetime-local" id="orgEventEnd" required class="w-full bg-[#18152e] text-gray-300 border border-[#3a3560] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#00f0ff] [color-scheme:dark]" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-1">Event Type</label>
+            <select id="orgEventType" required class="w-full bg-[#18152e] text-white border border-[#3a3560] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#00f0ff] appearance-none">
+              <option value="club_nights">Club Night</option>
+              <option value="concerts">Live Concert</option>
+              <option value="comedy">Comedy Show</option>
+              <option value="jamming">Jamming</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-1">4-Digit Access PIN</label>
+            <input type="text" id="orgEventPin" required pattern="[0-9]{4}" maxlength="4" placeholder="e.g. 1234 (Used to check ticket sales)" class="w-full bg-[#18152e] text-white border border-[#3a3560] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#00f0ff]" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-1">Flyer Template</label>
+            <input type="file" id="orgEventFlyer" accept="image/*" required class="w-full text-sm text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:font-semibold file:bg-[#18152e] file:text-[#00f0ff] hover:file:bg-[#2b274c]" />
+          </div>
+        </div>
+        <p id="orgEventError" class="text-red-500 text-xs mt-2"></p>
+        <button type="submit" id="orgSubmitBtn" class="w-full mt-6 bg-gradient-to-r from-[#00f0ff] to-[#0099ff] text-[#041018] font-bold py-3 rounded-xl hover:opacity-90 transition-opacity">Submit Event</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Organize Success Modal -->
+  <div id="organizeSuccessModal" class="hidden fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+    <div class="bg-[#100e21] border border-[#00f0ff] w-full max-w-sm p-8 rounded-3xl text-center shadow-[0_0_40px_rgba(0,240,255,0.2)]">
+      <div class="w-16 h-16 bg-[#00f0ff]/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-[#00f0ff]">
+        <i class="fa-solid fa-check text-2xl text-[#00f0ff]"></i>
+      </div>
+      <h3 class="text-2xl font-bold text-white mb-2">Event Submitted!</h3>
+      <p class="text-sm text-gray-400 mb-6">Your event has been successfully sent to the admin for review. It will be live shortly.</p>
+      <button type="button" onclick="document.getElementById('organizeSuccessModal').classList.add('hidden')" class="bg-[#18152e] border border-[#3a3560] text-white font-bold py-2.5 px-6 rounded-xl w-full hover:bg-[#2b274c] transition-colors">Awesome!</button>
+    </div>
+  </div>
+
+  <script>
+    function openOrganizeModal() {
+      const mobileMenu = document.getElementById('mobileUserMenu');
+      if (mobileMenu) mobileMenu.classList.add('hidden');
+      const desktopMenu = document.getElementById('desktopUserMenu');
+      if (desktopMenu) desktopMenu.classList.add('hidden');
+      
+      document.getElementById('organizeModal').classList.remove('hidden');
+      document.getElementById('organizeForm').reset();
+      document.getElementById('orgEventError').textContent = '';
+    }
+    
+    async function submitOrganizerEvent() {
+      const name = document.getElementById('orgEventName').value.trim();
+      const venue = document.getElementById('orgEventVenue').value;
+      const city = document.getElementById('orgEventCity').value;
+      const category = document.getElementById('orgEventType').value;
+      const startVal = document.getElementById('orgEventStart').value;
+      const endVal = document.getElementById('orgEventEnd').value;
+      
+      const fileInput = document.getElementById('orgEventFlyer');
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      let formattedDate = '';
+      if (startVal) {
+        const opts = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' };
+        formattedDate = new Date(startVal).toLocaleString('en-US', opts).replace(/,/g, '');
+        if (endVal) {
+          formattedDate += ' to ' + new Date(endVal).toLocaleString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(/,/g, '');
+        }
+      }
+
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const payload = {
+          name,
+          venueName: venue,
+          areaId: city,
+          category,
+          date: formattedDate,
+          couplePrice: 0,
+          stagPrice: 0,
+          imageData: String(reader.result),
+          organizerPin: document.getElementById('orgEventPin').value
+        };
+        const btn = document.getElementById('orgSubmitBtn');
+        btn.disabled = true;
+        btn.textContent = 'Submitting...';
+        try {
+          const res = await fetch('/api/events', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error || 'Failed to submit');
+          }
+          document.getElementById('organizeModal').classList.add('hidden');
+          document.getElementById('organizeSuccessModal').classList.remove('hidden');
+          if (typeof fetchEvents === 'function') fetchEvents(); // Refresh homepage
+        } catch(e) {
+          document.getElementById('orgEventError').textContent = e.message;
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Submit Event';
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  </script>
+
+  <!-- Organizer Login Modal -->
+  <div id="orgLoginModal" class="hidden fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="bg-[#100e21] border border-[#2b274c] w-full max-w-sm p-6 rounded-2xl relative shadow-2xl">
+      <button type="button" onclick="document.getElementById('orgLoginModal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+      <h3 class="text-xl font-bold text-white mb-4">Organizer Login</h3>
+      <form id="orgLoginForm" onsubmit="event.preventDefault(); submitOrgLogin();">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-1">Event Name</label>
+            <input type="text" id="loginEventName" required placeholder="Name of your event" class="w-full bg-[#18152e] text-white border border-[#3a3560] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#00f0ff]" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-1">4-Digit PIN</label>
+            <input type="password" id="loginEventPin" required pattern="[0-9]{4}" maxlength="4" placeholder="••••" class="w-full bg-[#18152e] text-white border border-[#3a3560] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#00f0ff]" />
+          </div>
+        </div>
+        <p id="orgLoginError" class="text-red-500 text-xs mt-2"></p>
+        <button type="submit" id="orgLoginBtn" class="w-full mt-6 bg-gradient-to-r from-[#00f0ff] to-[#0099ff] text-[#041018] font-bold py-3 rounded-xl hover:opacity-90 transition-opacity">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Organizer Dashboard Modal -->
+  <div id="orgDashboardModal" class="hidden fixed inset-0 z-[120] flex flex-col p-4 bg-black/95 backdrop-blur-md overflow-y-auto">
+    <div class="w-full max-w-2xl mx-auto my-auto bg-[#100e21] border border-[#2b274c] rounded-2xl relative shadow-2xl p-6">
+      <button type="button" onclick="document.getElementById('orgDashboardModal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+      <div id="orgDashboardContent" class="text-white text-sm">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function submitOrgLogin() {
+      const btn = document.getElementById('orgLoginBtn');
+      const err = document.getElementById('orgLoginError');
+      err.textContent = '';
+      btn.disabled = true;
+      btn.textContent = 'Loading...';
+      
+      try {
+        const payload = {
+          eventName: document.getElementById('loginEventName').value,
+          pin: document.getElementById('loginEventPin').value
+        };
+        const res = await fetch('/api/organizer/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Login failed');
+        
+        document.getElementById('orgLoginModal').classList.add('hidden');
+        renderOrgDashboard(data);
+      } catch (e) {
+        err.textContent = e.message;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Login';
+      }
+    }
+
+    function renderOrgDashboard(data) {
+      const modal = document.getElementById('orgDashboardModal');
+      const container = document.getElementById('orgDashboardContent');
+      
+      let html = '<h2 class="text-2xl font-black text-[#00f0ff] mb-2">' + data.event.name + '</h2>';
+      html += '<p class="text-gray-400 mb-6"><i class="fa-solid fa-location-dot mr-1 text-[#ff007f]"></i> ' + data.event.venue + ' &bull; ' + data.event.date + '</p>';
+      
+      html += '<div class="grid grid-cols-2 gap-4 mb-6">';
+      html += '<div class="bg-[#18152e] p-4 rounded-xl text-center border border-[#3a3560]"><div class="text-2xl font-bold text-white">' + data.stats.totalBookings + '</div><div class="text-[10px] text-gray-400 uppercase tracking-wide">Total Bookings</div></div>';
+      html += '<div class="bg-[#18152e] p-4 rounded-xl text-center border border-[#3a3560]"><div class="text-2xl font-bold text-green-400">₹' + data.stats.totalRevenue + '</div><div class="text-[10px] text-gray-400 uppercase tracking-wide">Revenue</div></div>';
+      html += '<div class="bg-[#18152e] p-4 rounded-xl text-center border border-[#3a3560]"><div class="text-2xl font-bold text-white">' + data.stats.totalCouple + '</div><div class="text-[10px] text-gray-400 uppercase tracking-wide">Couple Passes</div></div>';
+      html += '<div class="bg-[#18152e] p-4 rounded-xl text-center border border-[#3a3560]"><div class="text-2xl font-bold text-white">' + data.stats.totalStag + '</div><div class="text-[10px] text-gray-400 uppercase tracking-wide">Stag Passes</div></div>';
+      html += '<div class="bg-[#18152e] p-4 rounded-xl text-center border border-[#3a3560] col-span-2"><div class="text-2xl font-bold text-[#ff007f]">' + data.stats.ticketsLeft + '</div><div class="text-[10px] text-gray-400 uppercase tracking-wide">Tickets Left</div></div>';
+      html += '</div>';
+
+      html += '<h3 class="text-sm font-bold text-gray-300 mb-3 border-b border-[#2b274c] pb-2">Recent Ticket Sales</h3>';
+      if (data.bookings.length === 0) {
+        html += '<p class="text-gray-500 italic text-center py-4">No tickets sold yet.</p>';
+      } else {
+        html += '<div class="space-y-2 max-h-60 overflow-y-auto pr-2">';
+        data.bookings.forEach(b => {
+          html += '<div class="flex justify-between items-center bg-[#141225] p-3 rounded-lg border border-[#2b274c]">';
+          html += '<div><div class="font-bold">' + b.name + '</div><div class="text-[10px] text-gray-400">C: ' + b.couple + ' | S: ' + b.stag + '</div></div>';
+          html += '<div class="font-bold text-green-400">₹' + b.amount + '</div>';
+          html += '</div>';
+        });
+        html += '</div>';
+      }
+
+      container.innerHTML = html;
+      modal.classList.remove('hidden');
+    }
+  </script>
+
+  <!-- FLOATING ACTION BUTTONS -->
+  <div class="fixed bottom-6 right-4 z-50 flex flex-col gap-3">
+    <!-- Call -->
+    <a href="tel:+918855882926" class="bg-blue-500 hover:bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110">
+      <i class="fa-solid fa-phone text-xl"></i>
+    </a>
+    <!-- WhatsApp -->
+    <a href="https://wa.me/918855882926" target="_blank" class="bg-[#25D366] hover:bg-[#20b858] text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110">
+      <i class="fa-brands fa-whatsapp text-2xl"></i>
+    </a>
+  </div>
+
+  <script src="assets/js/data.js?v=4"></script>
+  <script src="assets/js/booking.js?v=4"></script>
+  <script src="assets/js/app.js?v=4"></script>
 </body>
 </html>
